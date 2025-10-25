@@ -54,6 +54,7 @@
     <string name="library_empty_message">Chưa có file âm thanh trong thư mục.</string>
     <string name="library_add">Thêm</string>
     <string name="library_select_mode">Chọn</string>
+     <string name="library_select_cancel">Huỷ</string>
     <string name="library_selection_count">Đã chọn %1$d file</string>
     <string name="dialog_select_sound_title">Chọn âm thanh</string>
     <string name="timer_pause">Tạm dừng</string>
@@ -65,4 +66,21 @@
     <string name="settings_screen_dim_value">Giảm sáng: %1$d%%</string>
     <string name="timer_completed_summary">Hoàn thành 3/3 giai đoạn</string>
     <string name="timer_total_elapsed">Tổng thời gian: 30 phút</string>
+    <string name="home_empty_message">Chưa có buổi thiền nào. Nhấn "Thêm buổi thiền" để bắt đầu.</string>
+    <string name="dialog_add_config_title">Tạo buổi thiền</string>
+    <string name="dialog_add_config_hint">Tên buổi thiền</string>
+    <string name="dialog_add_config_positive">Tạo</string>
+    <string name="home_config_added">Đã thêm buổi thiền "%1$s"</string>
+    <string name="home_config_deleted">Đã xoá buổi thiền "%1$s"</string>
+    <string name="home_delete_title">Xoá buổi thiền</string>
+    <string name="home_delete_message">Bạn có chắc muốn xoá "%1$s"?</string>
+    <string name="library_add_title">Thêm âm thanh</string>
+    <string name="library_add_hint">Tên file (ví dụ: tieng_mua.mp3)</string>
+    <string name="library_add_error">Vui lòng nhập tên file hợp lệ</string>
+    <string name="library_added_message">Đã thêm "%1$s"</string>
+    <string name="library_delete_title">Xoá âm thanh</string>
+    <string name="library_delete_message">Xoá %1$d file đã chọn?</string>
+    <string name="library_deleted_message">Đã xoá %1$d file</string>
+    <string name="select_sound_no_options">Chưa có âm thanh khả dụng</string>
+    <string name="settings_saved_message">Đã lưu cài đặt mặc định</string>
 </resources>

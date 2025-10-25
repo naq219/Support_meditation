@@ -1,11 +1,13 @@
 package naq.sm4.ui.home;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import naq.sm4.R;
@@ -18,14 +20,21 @@ public class HomeConfigAdapter extends RecyclerView.Adapter<HomeConfigAdapter.Co
         void onStartClicked(@NonNull MeditationConfig config);
 
         void onEditClicked(@NonNull MeditationConfig config);
+
+        void onOptionsRequested(@NonNull View anchor, @NonNull MeditationConfig config);
     }
 
-    private final List<MeditationConfig> configs;
+    private final List<MeditationConfig> configs = new ArrayList<>();
     private final ConfigCardListener listener;
 
-    public HomeConfigAdapter(@NonNull List<MeditationConfig> configs, @NonNull ConfigCardListener listener) {
-        this.configs = configs;
+    public HomeConfigAdapter(@NonNull ConfigCardListener listener) {
         this.listener = listener;
+    }
+
+    public void updateConfigs(@NonNull List<MeditationConfig> newConfigs) {
+        configs.clear();
+        configs.addAll(newConfigs);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -51,6 +60,10 @@ public class HomeConfigAdapter extends RecyclerView.Adapter<HomeConfigAdapter.Co
         binding.startButton.setOnClickListener(v -> listener.onStartClicked(config));
         binding.editButton.setOnClickListener(v -> listener.onEditClicked(config));
         binding.getRoot().setOnClickListener(v -> listener.onStartClicked(config));
+        binding.getRoot().setOnLongClickListener(v -> {
+            listener.onOptionsRequested(v, config);
+            return true;
+        });
     }
 
     @Override
