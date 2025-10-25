@@ -93,18 +93,23 @@ public class MeditationTimerFragment extends Fragment {
         });
         binding.soundToggle.setOnCheckedChangeListener((buttonView, isChecked) -> timerViewModel.updateSoundEnabled(isChecked));
         binding.vibrationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> timerViewModel.updateVibrationEnabled(isChecked));
+        timerViewModel.updateSoundEnabled(binding.soundToggle.isChecked());
+        timerViewModel.updateVibrationEnabled(binding.vibrationToggle.isChecked());
     }
 
     private void initialiseTimerIfNeeded() {
-        if (timerViewModel.getState().getValue() != MeditationTimerViewModel.TimerState.IDLE) {
+        MeditationTimerViewModel.TimerState state = timerViewModel.getState().getValue();
+        if (state == MeditationTimerViewModel.TimerState.RUNNING || state == MeditationTimerViewModel.TimerState.PAUSED) {
             return;
         }
-        MeditationConfig pending = homeViewModel.getPendingEdit();
-        if (pending == null && homeViewModel.getConfigs().getValue() != null && !homeViewModel.getConfigs().getValue().isEmpty()) {
-            pending = homeViewModel.getConfigs().getValue().get(0);
+        MeditationConfig session = homeViewModel.consumeActiveSession();
+        if (session == null) {
+            if (homeViewModel.getConfigs().getValue() != null && !homeViewModel.getConfigs().getValue().isEmpty()) {
+                session = homeViewModel.getConfigs().getValue().get(0);
+            }
         }
-        if (pending != null) {
-            timerViewModel.initialise(pending, true);
+        if (session != null) {
+            timerViewModel.initialise(session, true);
         }
     }
 

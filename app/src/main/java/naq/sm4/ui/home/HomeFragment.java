@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         configAdapter = new HomeConfigAdapter(this);
 
         binding.configRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -65,6 +65,7 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
 
     @Override
     public void onStartClicked(@NonNull MeditationConfig config) {
+        viewModel.setActiveSession(config);
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_homeFragment_to_meditationTimerFragment);
     }

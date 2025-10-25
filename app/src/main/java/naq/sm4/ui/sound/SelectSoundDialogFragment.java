@@ -8,19 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import naq.sm4.R;
+import naq.sm4.ui.sound.SoundLibraryViewModel;
 
 /**
  * DialogFragment that lets the user pick one or more sound files from the
@@ -48,6 +49,9 @@ public class SelectSoundDialogFragment extends DialogFragment {
 
         View root = LayoutInflater.from(context).inflate(R.layout.dialog_select_sound, null, false);
         ListView listView = root.findViewById(android.R.id.list);
+        TextView emptyView = root.findViewById(R.id.selectSoundEmptyText);
+        listView.setEmptyView(emptyView);
+
         adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_multiple_choice, new ArrayList<>());
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
@@ -94,8 +98,6 @@ public class SelectSoundDialogFragment extends DialogFragment {
      */
     private void updateSelections(@NonNull ListView listView, @NonNull List<String> sounds) {
         for (int i = 0; i < sounds.size(); i++) {
-
-            
             String sound = sounds.get(i);
             listView.setItemChecked(i, selected.contains(sound));
         }

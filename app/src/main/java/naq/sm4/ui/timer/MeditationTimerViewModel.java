@@ -1,10 +1,12 @@
 package naq.sm4.ui.timer;
 
 import android.app.Application;
-import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Build;
 import android.os.PowerManager;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -12,7 +14,6 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,8 +61,10 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     private boolean soundEnabled = true;
     private boolean vibrationEnabled = true;
 
-    private MediaPlayer mediaPlayer;
+    private final TimerSoundPlayer soundPlayer = new TimerSoundPlayer();
     private PowerManager.WakeLock wakeLock;
+    private int repeatIntervalSeconds = -1;
+    private int repeatCountdown = -1;
 
     public MeditationTimerViewModel(@NonNull Application application) {
         super(application);
@@ -99,6 +102,10 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         return stateLiveData;
     }
 
+    /**
+     * Prepares the timer with the supplied {@link MeditationConfig} and optionally starts it
+     * immediately.
+     */
     @MainThread
     public void initialise(@NonNull MeditationConfig config, boolean startImmediately) {
         activeConfig = config;
@@ -123,6 +130,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Starts the countdown if not already running and at least one stage is available.
+     */
     @MainThread
     public void startTimer() {
         if (stateLiveData.getValue() == TimerState.RUNNING || stages.isEmpty()) {
@@ -135,6 +145,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         playStageCue();
     }
 
+    /**
+     * Pauses the timer, allowing the user to resume later without losing progress.
+     */
     @MainThread
     public void pauseTimer() {
         if (stateLiveData.getValue() != TimerState.RUNNING) {
@@ -145,6 +158,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         releaseWakeLock();
     }
 
+    /**
+     * Resumes a previously paused timer.
+     */
     @MainThread
     public void resumeTimer() {
         if (stateLiveData.getValue() != TimerState.PAUSED) {
@@ -155,24 +171,36 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         handler.postDelayed(tickRunnable, TICK_INTERVAL_MS);
     }
 
+    /**
+     * Stops the session and emits a summary message. When invoked by the user the timer screen
+     * should return to the previous UI immediately.
+     */
     @MainThread
     public void stopTimer(boolean userInitiated) {
         handler.removeCallbacks(tickRunnable);
         releaseWakeLock();
         stateLiveData.setValue(TimerState.STOPPED);
-        String summary = getApplication().getString(R.string.timer_session_stopped, currentStageIndex, stages.size());
+        int completedStages = Math.min(currentStageIndex, stages.size());
+        String summary = getApplication().getString(R.string.timer_session_stopped, completedStages, stages.size());
         sessionSummary.setValue(summary);
         sessionTotal.setValue(formatDuration(sessionSecondsElapsed));
-        if (userInitiated) {
+        playSilently();
+    }
+
+    /**
+     * Enables or disables sound playback for subsequent cues.
+     */
+    @MainThread
+    public void updateSoundEnabled(boolean enabled) {
+        soundEnabled = enabled;
+        if (!enabled) {
             playSilently();
         }
     }
 
-    @MainThread
-    public void updateSoundEnabled(boolean enabled) {
-        soundEnabled = enabled;
-    }
-
+    /**
+     * Enables or disables vibration feedback for subsequent cues.
+     */
     @MainThread
     public void updateVibrationEnabled(boolean enabled) {
         vibrationEnabled = enabled;
@@ -184,6 +212,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         stageTitle.setValue(stage.getName());
         stageCounter.setValue(getApplication().getString(R.string.timer_stage_counter, index + 1, stages.size()));
         countdownText.setValue(formatDuration(secondsRemaining));
+
+        repeatIntervalSeconds = stage.getRepeatMinutes() > 0 ? stage.getRepeatMinutes() * 60 : -1;
+        repeatCountdown = repeatIntervalSeconds;
 
         if (index + 1 < stages.size()) {
             nextStageTitle.setValue(getApplication().getString(R.string.timer_next_stage, stages.get(index + 1).getName()));
@@ -199,6 +230,13 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         secondsRemaining--;
         sessionSecondsElapsed++;
         countdownText.setValue(formatDuration(Math.max(0, secondsRemaining)));
+        if (repeatIntervalSeconds > 0) {
+            repeatCountdown--;
+            if (repeatCountdown <= 0 && secondsRemaining > 0) {
+                playStageCue();
+                repeatCountdown = repeatIntervalSeconds;
+            }
+        }
         if (secondsRemaining <= 0) {
             advanceStage();
         } else {
@@ -227,6 +265,7 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     }
 
     private void playStageCue() {
+        vibrateCue();
         if (!soundEnabled || stages.isEmpty()) {
             return;
         }
@@ -242,30 +281,28 @@ public class MeditationTimerViewModel extends AndroidViewModel {
                 errorMessage.setValue(getApplication().getString(R.string.timer_missing_sound, sound));
                 return;
             }
-            releasePlayer();
-            File workingDir = StorageHelper.ensureWorkingDirectory();
-            File target = new File(workingDir, sound);
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDataSource(target.getAbsolutePath());
-            mediaPlayer.setOnPreparedListener(MediaPlayer::start);
-            mediaPlayer.prepareAsync();
+            soundPlayer.play(getApplication(), sound);
         } catch (IOException e) {
             errorMessage.setValue(getApplication().getString(R.string.timer_missing_sound, sound));
         }
     }
 
     private void playSilently() {
-        releasePlayer();
+        soundPlayer.stop();
     }
 
-    private void releasePlayer() {
-        if (mediaPlayer != null) {
-            try {
-                mediaPlayer.stop();
-            } catch (IllegalStateException ignored) {
-            }
-            mediaPlayer.release();
-            mediaPlayer = null;
+    private void vibrateCue() {
+        if (!vibrationEnabled) {
+            return;
+        }
+        Vibrator vibrator = (Vibrator) getApplication().getSystemService(Application.VIBRATOR_SERVICE);
+        if (vibrator == null || !vibrator.hasVibrator()) {
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            vibrator.vibrate(200);
         }
     }
 
@@ -298,6 +335,6 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         super.onCleared();
         handler.removeCallbacks(tickRunnable);
         releaseWakeLock();
-        releasePlayer();
+        soundPlayer.stop();
     }
 }

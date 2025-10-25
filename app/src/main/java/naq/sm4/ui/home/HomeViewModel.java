@@ -37,6 +37,7 @@ public class HomeViewModel extends AndroidViewModel {
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     private MeditationConfig pendingEdit;
+    private MeditationConfig activeSession;
 
     public HomeViewModel(@NonNull Application application) {
         super(application);
@@ -74,6 +75,11 @@ public class HomeViewModel extends AndroidViewModel {
         }
         executor.execute(() -> {
             List<MeditationConfig> configs = configRepository.loadConfigs(getApplication());
+            if (configs.isEmpty()) {
+                MeditationConfig defaultConfig = buildDefaultConfig(getApplication().getString(R.string.label_config_name));
+                configs.add(defaultConfig);
+                configRepository.saveConfigs(getApplication(), configs);
+            }
             configsLiveData.postValue(new ArrayList<>(configs));
             loadingLiveData.postValue(false);
         });
@@ -109,6 +115,23 @@ public class HomeViewModel extends AndroidViewModel {
     @Nullable
     public MeditationConfig getPendingEdit() {
         return pendingEdit;
+    }
+
+    /**
+     * Marks the provided config as the next session to start when the timer screen opens.
+     */
+    public void setActiveSession(@NonNull MeditationConfig config) {
+        activeSession = config;
+    }
+
+    /**
+     * Returns and clears the active session so it is consumed exactly once by the timer.
+     */
+    @Nullable
+    public MeditationConfig consumeActiveSession() {
+        MeditationConfig session = activeSession;
+        activeSession = null;
+        return session;
     }
 
     @NonNull
