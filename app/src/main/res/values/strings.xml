@@ -31,12 +31,11 @@
     <string name="button_cancel">Huỷ</string>
     <string name="button_done">Xong</string>
     <string name="button_delete_selected">Xoá đã chọn</string>
-    <string name="settings_vibration">Mức độ rung</string>
-    <string name="settings_vibration_off">Tắt</string>
-    <string name="settings_vibration_low">Nhẹ</string>
-    <string name="settings_vibration_high">Mạnh</string>
+    <string name="settings_vibration">Độ rung</string>
+    <string name="settings_vibration_value">Độ rung: %1$d%%</string>
     <string name="settings_sound">Âm thanh</string>
-    <string name="settings_screen_dim">Giảm sáng màn hình khi thiền</string>
+    <string name="settings_screen_brightness">Độ sáng màn hình khi thiền</string>
+    <string name="settings_screen_brightness_value">Độ sáng: %1$d%%</string>
     <string name="settings_default_sound">Âm thanh mặc định</string>
     <string name="timer_stage_label">Giai đoạn: %1$s</string>
     <string name="timer_remaining">Thời gian còn lại</string>
@@ -58,7 +57,6 @@
     <string name="library_selection_count">Đã chọn %1$d file</string>
     <string name="dialog_select_sound_title">Chọn âm thanh</string>
     <string name="settings_sound_toggle">Bật âm thanh</string>
-    <string name="settings_screen_dim_value">Giảm sáng: %1$d%%</string>
     <string name="home_empty_message">Chưa có buổi thiền nào. Nhấn "Thêm buổi thiền" để bắt đầu.</string>
     <string name="dialog_add_config_title">Tạo buổi thiền</string>
     <string name="dialog_add_config_hint">Tên buổi thiền</string>

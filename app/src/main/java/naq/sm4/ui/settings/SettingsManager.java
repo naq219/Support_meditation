@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
 
 import naq.sm4.data.SettingsState;
-import naq.sm4.data.SettingsState.VibrationLevel;
 
 /**
  * Centralised manager that persists {@link SettingsState} using {@link SharedPreferences} and
@@ -16,8 +15,8 @@ public final class SettingsManager {
 
     private static final String PREFS_NAME = "naq.sm4.settings";
     private static final String KEY_SOUND = "sound_enabled";
-    private static final String KEY_VIBRATION = "vibration_level";
-    private static final String KEY_SCREEN_DIM = "screen_dim_percent";
+    private static final String KEY_VIBRATION_STRENGTH = "vibration_strength_percent";
+    private static final String KEY_SCREEN_BRIGHTNESS = "screen_brightness_percent";
 
     private static SettingsManager instance;
     private SettingsState cachedState;
@@ -49,18 +48,18 @@ public final class SettingsManager {
     }
 
     @NonNull
-    public synchronized SettingsState updateVibrationLevel(@NonNull Context context, @NonNull VibrationLevel level) {
+    public synchronized SettingsState updateVibrationStrength(@NonNull Context context, int percent) {
         SettingsState current = getSettings(context);
-        cachedState = current.withVibration(level);
+        cachedState = current.withVibrationStrength(percent);
         persist(context.getApplicationContext(), cachedState);
         return cachedState;
     }
 
     @NonNull
-    public synchronized SettingsState updateScreenDim(@NonNull Context context, int percent) {
+    public synchronized SettingsState updateScreenBrightness(@NonNull Context context, int percent) {
         int clamped = Math.max(0, Math.min(100, percent));
         SettingsState current = getSettings(context);
-        cachedState = current.withScreenDimPercent(clamped);
+        cachedState = current.withScreenBrightnessPercent(clamped);
         persist(context.getApplicationContext(), cachedState);
         return cachedState;
     }
@@ -69,23 +68,17 @@ public final class SettingsManager {
     private SettingsState load(@NonNull Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         boolean soundEnabled = prefs.getBoolean(KEY_SOUND, true);
-        String vibrationName = prefs.getString(KEY_VIBRATION, VibrationLevel.LOW.name());
-        int screenDimPercent = prefs.getInt(KEY_SCREEN_DIM, 30);
-        VibrationLevel vibrationLevel;
-        try {
-            vibrationLevel = VibrationLevel.valueOf(vibrationName);
-        } catch (IllegalArgumentException e) {
-            vibrationLevel = VibrationLevel.LOW;
-        }
-        return new SettingsState(vibrationLevel, soundEnabled, screenDimPercent);
+        int vibrationStrength = prefs.getInt(KEY_VIBRATION_STRENGTH, 50);
+        int screenBrightness = prefs.getInt(KEY_SCREEN_BRIGHTNESS, 30);
+        return new SettingsState(vibrationStrength, soundEnabled, screenBrightness);
     }
 
     private void persist(@NonNull Context context, @NonNull SettingsState state) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit()
                 .putBoolean(KEY_SOUND, state.isSoundEnabled())
-                .putString(KEY_VIBRATION, state.getVibrationLevel().name())
-                .putInt(KEY_SCREEN_DIM, state.getScreenDimPercent())
+                .putInt(KEY_VIBRATION_STRENGTH, state.getVibrationStrengthPercent())
+                .putInt(KEY_SCREEN_BRIGHTNESS, state.getScreenBrightnessPercent())
                 .apply();
     }
 }

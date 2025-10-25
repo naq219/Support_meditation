@@ -20,35 +20,25 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="@color/text_primary" />
 
-        <RadioGroup
-            android:id="@+id/vibrationRadioGroup"
+        <com.google.android.material.slider.Slider
+            android:id="@+id/vibrationSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:value="50"
+            android:valueFrom="0"
+            android:valueTo="100"
+            android:stepSize="5" />
+
+        <TextView
+            android:id="@+id/vibrationValueText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="vertical">
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/vibrationOff"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/settings_vibration_off"
-                android:textColor="@color/text_secondary" />
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/vibrationLow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_vibration_low"
-                android:textColor="@color/text_secondary" />
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/vibrationHigh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/settings_vibration_high"
-                android:textColor="@color/text_secondary" />
-        </RadioGroup>
+            android:text="@string/settings_vibration_value"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@color/text_secondary"
+            tools:text="Độ rung: 50%" />
 
         <View
             android:layout_width="match_parent"
@@ -81,12 +71,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/settings_screen_dim"
+            android:text="@string/settings_screen_brightness"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
             android:textColor="@color/text_primary" />
 
         <com.google.android.material.slider.Slider
-            android:id="@+id/screenDimSlider"
+            android:id="@+id/screenBrightnessSlider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -96,14 +86,14 @@
             android:stepSize="5" />
 
         <TextView
-            android:id="@+id/screenDimValueText"
+            android:id="@+id/screenBrightnessValueText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/settings_screen_dim_value"
+            android:text="@string/settings_screen_brightness_value"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
             android:textColor="@color/text_secondary"
-            tools:text="Giảm sáng: 30%" />
+            tools:text="Độ sáng: 30%" />
 
     </LinearLayout>
 

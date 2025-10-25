@@ -86,7 +86,7 @@ public class MeditationTimerFragment extends Fragment {
             binding.resumeButton.setVisibility(paused ? View.VISIBLE : View.GONE);
             binding.stopButton.setEnabled(state != MeditationTimerViewModel.TimerState.COMPLETED && state != MeditationTimerViewModel.TimerState.STOPPED);
         });
-        timerViewModel.getScreenDimPercent().observe(getViewLifecycleOwner(), this::applyScreenDim);
+        timerViewModel.getScreenBrightnessPercent().observe(getViewLifecycleOwner(), this::applyScreenBrightness);
     }
 
     private void setupControls() {
@@ -96,10 +96,10 @@ public class MeditationTimerFragment extends Fragment {
             timerViewModel.stopTimer(true);
             NavHostFragment.findNavController(this).navigateUp();
         });
+        binding.soundToggle.setChecked(timerViewModel.isSoundEnabled());
+        binding.vibrationToggle.setChecked(timerViewModel.isVibrationEnabled());
         binding.soundToggle.setOnCheckedChangeListener((buttonView, isChecked) -> timerViewModel.updateSoundEnabled(isChecked));
         binding.vibrationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> timerViewModel.updateVibrationEnabled(isChecked));
-        timerViewModel.updateSoundEnabled(binding.soundToggle.isChecked());
-        timerViewModel.updateVibrationEnabled(binding.vibrationToggle.isChecked());
     }
 
     private void initialiseTimerIfNeeded() {
@@ -131,15 +131,12 @@ public class MeditationTimerFragment extends Fragment {
         originalBrightness = params.screenBrightness;
     }
 
-    private void applyScreenDim(int percent) {
+    private void applyScreenBrightness(int percent) {
         Window window = requireActivity().getWindow();
         WindowManager.LayoutParams params = window.getAttributes();
-        if (percent <= 0) {
-            params.screenBrightness = originalBrightness != null ? originalBrightness : WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
-        } else {
-            float dimLevel = 1f - (Math.min(100, Math.max(0, percent)) / 100f);
-            params.screenBrightness = Math.max(0.05f, dimLevel);
-        }
+        float clamped = Math.max(0, Math.min(100, percent));
+        float brightness = clamped <= 0 ? 0.05f : clamped / 100f;
+        params.screenBrightness = brightness;
         window.setAttributes(params);
     }
 

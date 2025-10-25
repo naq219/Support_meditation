@@ -65,9 +65,6 @@ public class SelectSoundDialogFragment extends DialogFragment {
         }
 
         viewModel.getSounds().observe(this, sounds -> {
-            if (!isAdded()) {
-                return;
-            }
             adapter.clear();
             adapter.addAll(sounds);
             adapter.notifyDataSetChanged();

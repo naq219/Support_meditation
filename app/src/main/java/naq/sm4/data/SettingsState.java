@@ -1,47 +1,48 @@
 package naq.sm4.data;
 
-import androidx.annotation.NonNull;
-
 public class SettingsState {
 
-    public enum VibrationLevel {
-        OFF,
-        LOW,
-        HIGH
-    }
-
-    private final VibrationLevel vibrationLevel;
+    private final int vibrationStrengthPercent;
     private final boolean soundEnabled;
-    private final int screenDimPercent;
+    private final int screenBrightnessPercent;
 
-    public SettingsState(@NonNull VibrationLevel vibrationLevel, boolean soundEnabled, int screenDimPercent) {
-        this.vibrationLevel = vibrationLevel;
+    public SettingsState(int vibrationStrengthPercent, boolean soundEnabled, int screenBrightnessPercent) {
+        this.vibrationStrengthPercent = clampPercent(vibrationStrengthPercent);
         this.soundEnabled = soundEnabled;
-        this.screenDimPercent = screenDimPercent;
+        this.screenBrightnessPercent = clampPercent(screenBrightnessPercent);
     }
 
-    @NonNull
-    public VibrationLevel getVibrationLevel() {
-        return vibrationLevel;
+    public int getVibrationStrengthPercent() {
+        return vibrationStrengthPercent;
     }
 
     public boolean isSoundEnabled() {
         return soundEnabled;
     }
 
-    public int getScreenDimPercent() {
-        return screenDimPercent;
+    public int getScreenBrightnessPercent() {
+        return screenBrightnessPercent;
     }
 
-    public SettingsState withVibration(@NonNull VibrationLevel level) {
-        return new SettingsState(level, soundEnabled, screenDimPercent);
+    public SettingsState withVibrationStrength(int percent) {
+        return new SettingsState(percent, soundEnabled, screenBrightnessPercent);
     }
 
     public SettingsState withSoundEnabled(boolean enabled) {
-        return new SettingsState(vibrationLevel, enabled, screenDimPercent);
+        return new SettingsState(vibrationStrengthPercent, enabled, screenBrightnessPercent);
     }
 
-    public SettingsState withScreenDimPercent(int percent) {
-        return new SettingsState(vibrationLevel, soundEnabled, percent);
+    public SettingsState withScreenBrightnessPercent(int percent) {
+        return new SettingsState(vibrationStrengthPercent, soundEnabled, percent);
+    }
+
+    private int clampPercent(int value) {
+        if (value < 0) {
+            return 0;
+        }
+        if (value > 100) {
+            return 100;
+        }
+        return value;
     }
 }

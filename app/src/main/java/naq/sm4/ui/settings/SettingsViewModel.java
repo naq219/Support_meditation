@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import naq.sm4.data.SettingsState;
-import naq.sm4.data.SettingsState.VibrationLevel;
 
 public class SettingsViewModel extends AndroidViewModel {
 
@@ -25,8 +24,8 @@ public class SettingsViewModel extends AndroidViewModel {
         return settingsLiveData;
     }
 
-    public void updateVibration(@NonNull VibrationLevel level) {
-        SettingsState updated = settingsManager.updateVibrationLevel(getApplication(), level);
+    public void updateVibrationStrength(int percent) {
+        SettingsState updated = settingsManager.updateVibrationStrength(getApplication(), percent);
         settingsLiveData.setValue(updated);
     }
 
@@ -35,8 +34,8 @@ public class SettingsViewModel extends AndroidViewModel {
         settingsLiveData.setValue(updated);
     }
 
-    public void updateScreenDim(int percent) {
-        SettingsState updated = settingsManager.updateScreenDim(getApplication(), percent);
+    public void updateScreenBrightness(int percent) {
+        SettingsState updated = settingsManager.updateScreenBrightness(getApplication(), percent);
         settingsLiveData.setValue(updated);
     }
 }

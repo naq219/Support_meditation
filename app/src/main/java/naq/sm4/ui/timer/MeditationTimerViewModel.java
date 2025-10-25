@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import naq.sm4.R;
 import naq.sm4.core.storage.StorageHelper;
@@ -61,14 +62,16 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     private int sessionSecondsElapsed = 0;
     private boolean soundEnabled = true;
     private boolean vibrationEnabled = true;
-    private int screenDimPercent = 0;
+    private int vibrationStrengthPercent = 0;
+    private int screenBrightnessPercent = 100;
 
-    private final MutableLiveData<Integer> screenDimLiveData = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> screenBrightnessLiveData = new MutableLiveData<>(100);
 
     private final TimerSoundPlayer soundPlayer = new TimerSoundPlayer();
     private PowerManager.WakeLock wakeLock;
     private int repeatIntervalSeconds = -1;
     private int repeatCountdown = -1;
+    private final Random random = new Random();
 
     public MeditationTimerViewModel(@NonNull Application application) {
         super(application);
@@ -106,8 +109,8 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         return stateLiveData;
     }
 
-    public LiveData<Integer> getScreenDimPercent() {
-        return screenDimLiveData;
+    public LiveData<Integer> getScreenBrightnessPercent() {
+        return screenBrightnessLiveData;
     }
 
     public boolean isSoundEnabled() {
@@ -220,7 +223,7 @@ public class MeditationTimerViewModel extends AndroidViewModel {
      */
     @MainThread
     public void updateVibrationEnabled(boolean enabled) {
-        vibrationEnabled = enabled;
+        vibrationEnabled = enabled && vibrationStrengthPercent > 0;
     }
 
     private void loadStage(int index) {
@@ -291,7 +294,7 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         if (sounds.isEmpty()) {
             return;
         }
-        String sound = sounds.get(0);
+        String sound = selectRandomSound(sounds);
         try {
             List<String> available = StorageHelper.listAudioFileNamesSorted();
             if (!available.contains(sound)) {
@@ -309,17 +312,19 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     }
 
     private void vibrateCue() {
-        if (!vibrationEnabled) {
+        if (!vibrationEnabled || vibrationStrengthPercent <= 0) {
             return;
         }
         Vibrator vibrator = (Vibrator) getApplication().getSystemService(Application.VIBRATOR_SERVICE);
         if (vibrator == null || !vibrator.hasVibrator()) {
             return;
         }
+        int durationMs = Math.max(40, 80 + vibrationStrengthPercent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+            int amplitude = Math.max(1, Math.round((vibrationStrengthPercent / 100f) * 255f));
+            vibrator.vibrate(VibrationEffect.createOneShot(durationMs, amplitude));
         } else {
-            vibrator.vibrate(200);
+            vibrator.vibrate(durationMs);
         }
     }
 
@@ -350,17 +355,17 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     private void applySettingsDefaults() {
         SettingsState state = SettingsManager.getInstance().getSettings(getApplication());
         soundEnabled = state.isSoundEnabled();
-        vibrationEnabled = state.getVibrationLevel() != SettingsState.VibrationLevel.OFF;
-        screenDimPercent = state.getScreenDimPercent();
-        screenDimLiveData.setValue(screenDimPercent);
+        vibrationStrengthPercent = state.getVibrationStrengthPercent();
+        vibrationEnabled = vibrationStrengthPercent > 0;
+        screenBrightnessPercent = state.getScreenBrightnessPercent();
+        screenBrightnessLiveData.setValue(screenBrightnessPercent);
     }
 
-    private void applyScreenDim() {
-        // Removed direct system brightness mutation
-    }
-
-    private void resetScreenDim() {
-        // Removed direct system brightness mutation
+    private String selectRandomSound(@NonNull List<String> sounds) {
+        if (sounds.size() == 1) {
+            return sounds.get(0);
+        }
+        return sounds.get(random.nextInt(sounds.size()));
     }
 
     @Override
