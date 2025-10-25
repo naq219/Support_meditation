@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +28,7 @@ public class MeditationTimerFragment extends Fragment {
     private FragmentMeditationTimerBinding binding;
     private MeditationTimerViewModel timerViewModel;
     private HomeViewModel homeViewModel;
+    private Float originalBrightness;
 
     @Nullable
     @Override
@@ -42,6 +45,7 @@ public class MeditationTimerFragment extends Fragment {
         timerViewModel = new ViewModelProvider(requireActivity()).get(MeditationTimerViewModel.class);
         homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
 
+        storeOriginalBrightness();
         observeViewModel();
         setupControls();
         initialiseTimerIfNeeded();
@@ -82,6 +86,7 @@ public class MeditationTimerFragment extends Fragment {
             binding.resumeButton.setVisibility(paused ? View.VISIBLE : View.GONE);
             binding.stopButton.setEnabled(state != MeditationTimerViewModel.TimerState.COMPLETED && state != MeditationTimerViewModel.TimerState.STOPPED);
         });
+        timerViewModel.getScreenDimPercent().observe(getViewLifecycleOwner(), this::applyScreenDim);
     }
 
     private void setupControls() {
@@ -116,6 +121,32 @@ public class MeditationTimerFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        restoreBrightness();
         binding = null;
+    }
+
+    private void storeOriginalBrightness() {
+        Window window = requireActivity().getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        originalBrightness = params.screenBrightness;
+    }
+
+    private void applyScreenDim(int percent) {
+        Window window = requireActivity().getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        if (percent <= 0) {
+            params.screenBrightness = originalBrightness != null ? originalBrightness : WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        } else {
+            float dimLevel = 1f - (Math.min(100, Math.max(0, percent)) / 100f);
+            params.screenBrightness = Math.max(0.05f, dimLevel);
+        }
+        window.setAttributes(params);
+    }
+
+    private void restoreBrightness() {
+        Window window = requireActivity().getWindow();
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.screenBrightness = originalBrightness != null ? originalBrightness : WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        window.setAttributes(params);
     }
 }

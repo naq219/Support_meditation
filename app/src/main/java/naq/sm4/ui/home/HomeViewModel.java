@@ -1,7 +1,6 @@
 package naq.sm4.ui.home;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
@@ -19,13 +18,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import naq.sm4.R;
 import naq.sm4.core.storage.ConfigRepository;
-import naq.sm4.core.storage.StorageHelper;
 import naq.sm4.data.MeditationConfig;
 import naq.sm4.data.MeditationStage;
 
 public class HomeViewModel extends AndroidViewModel {
-
-    private static final String TAG = "HomeViewModel";
 
     private final MutableLiveData<List<MeditationConfig>> configsLiveData = new MutableLiveData<>(Collections.emptyList());
     private final MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>(false);
@@ -91,8 +87,7 @@ public class HomeViewModel extends AndroidViewModel {
         if (trimmed.isEmpty()) {
             trimmed = getApplication().getString(R.string.label_config_name);
         }
-        List<MeditationStage> defaultStages = createDefaultStages();
-        MeditationConfig newConfig = new MeditationConfig(trimmed, calculateTotal(defaultStages), defaultStages);
+        MeditationConfig newConfig = new MeditationConfig(trimmed, 0, Collections.emptyList());
         persistAndUpdate(list -> {
             list.add(0, newConfig);
             messageLiveData.postValue(getApplication().getString(R.string.home_config_added, newConfig.getName()));
@@ -135,14 +130,8 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     @NonNull
-    public List<MeditationStage> buildDefaultStages() {
-        return new ArrayList<>(createDefaultStages());
-    }
-
-    @NonNull
     public MeditationConfig buildDefaultConfig(@NonNull String name) {
-        List<MeditationStage> stages = createDefaultStages();
-        return new MeditationConfig(name, calculateTotal(stages), stages);
+        return new MeditationConfig(name, 0, Collections.emptyList());
     }
 
     public void saveConfig(@NonNull MeditationConfig updatedConfig, @Nullable MeditationConfig original) {
@@ -178,32 +167,12 @@ public class HomeViewModel extends AndroidViewModel {
         });
     }
 
-    private List<MeditationStage> createDefaultStages() {
-        List<String> sounds = new ArrayList<>();
-        try {
-            List<String> stored = StorageHelper.listAudioFileNamesSorted();
-            if (!stored.isEmpty()) {
-                sounds.add(stored.get(0));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Failed to read audio files", e);
-        }
-        if (sounds.isEmpty()) {
-            sounds.add("bell_start.mp3");
-        }
-        List<MeditationStage> stages = new ArrayList<>();
-        stages.add(new MeditationStage("Khởi động", 5, 0, sounds));
-        stages.add(new MeditationStage("Thiền sâu", 15, 5, new ArrayList<>(sounds)));
-        stages.add(new MeditationStage("Thư giãn", 10, 0, new ArrayList<>(sounds)));
-        return stages;
-    }
-
     private int calculateTotal(@NonNull List<MeditationStage> stages) {
         int total = 0;
         for (MeditationStage stage : stages) {
             total += stage.getMinutes();
         }
-        return Math.max(1, total);
+        return Math.max(0, total);
     }
 
     @Override

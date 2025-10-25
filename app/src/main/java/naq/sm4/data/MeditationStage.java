@@ -2,6 +2,7 @@ package naq.sm4.data;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class MeditationStage {
 
@@ -42,5 +43,25 @@ public class MeditationStage {
             return "Chỉ phát 1 lần";
         }
         return "Lặp mỗi " + repeatMinutes + " phút";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MeditationStage)) {
+            return false;
+        }
+        MeditationStage that = (MeditationStage) o;
+        return minutes == that.minutes
+                && repeatMinutes == that.repeatMinutes
+                && Objects.equals(name, that.name)
+                && Objects.equals(sounds, that.sounds);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, minutes, repeatMinutes, sounds);
     }
 }

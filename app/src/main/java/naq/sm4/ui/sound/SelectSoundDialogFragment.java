@@ -57,14 +57,21 @@ public class SelectSoundDialogFragment extends DialogFragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         ArrayList<String> preselected = getArguments() != null ? getArguments().getStringArrayList(ARG_SELECTED) : null;
-        if (preselected != null) {
+        if (preselected != null && !preselected.isEmpty()) {
+            selected.clear();
             selected.addAll(preselected);
+        } else {
+            selected.clear();
         }
 
         viewModel.getSounds().observe(this, sounds -> {
+            if (!isAdded()) {
+                return;
+            }
             adapter.clear();
             adapter.addAll(sounds);
             adapter.notifyDataSetChanged();
+            selected.retainAll(sounds);
             updateSelections(listView, sounds);
         });
 

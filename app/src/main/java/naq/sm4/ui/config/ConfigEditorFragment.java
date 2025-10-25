@@ -33,6 +33,8 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
     private final List<MeditationStage> stages = new ArrayList<>();
     private HomeViewModel homeViewModel;
     private MeditationConfig originalConfig;
+    private boolean initialised;
+    private String configNameCache = "";
 
     @Nullable
     @Override
@@ -67,6 +69,7 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
 
             @Override
             public void afterTextChanged(Editable s) {
+                configNameCache = s == null ? "" : s.toString();
             }
         });
 
@@ -81,15 +84,16 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
             }
         });
 
-        originalConfig = homeViewModel.getPendingEdit();
-        if (originalConfig != null) {
-            binding.configNameInput.setText(originalConfig.getName());
+        if (!initialised) {
+            originalConfig = homeViewModel.getPendingEdit();
             stages.clear();
-            stages.addAll(new ArrayList<>(originalConfig.getStages()));
-        } else {
-            stages.clear();
-            stages.addAll(homeViewModel.buildDefaultStages());
+            if (originalConfig != null) {
+                configNameCache = originalConfig.getName();
+                stages.addAll(new ArrayList<>(originalConfig.getStages()));
+            }
+            initialised = true;
         }
+        binding.configNameInput.setText(configNameCache);
         stageListAdapter.notifyDataSetChanged();
         updateTotalMinutes();
 

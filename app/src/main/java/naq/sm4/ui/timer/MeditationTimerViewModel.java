@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.PowerManager;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -24,6 +23,8 @@ import naq.sm4.R;
 import naq.sm4.core.storage.StorageHelper;
 import naq.sm4.data.MeditationConfig;
 import naq.sm4.data.MeditationStage;
+import naq.sm4.data.SettingsState;
+import naq.sm4.ui.settings.SettingsManager;
 
 /**
  * ViewModel maintaining the state of a meditation session, including stage progression,
@@ -60,6 +61,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
     private int sessionSecondsElapsed = 0;
     private boolean soundEnabled = true;
     private boolean vibrationEnabled = true;
+    private int screenDimPercent = 0;
+
+    private final MutableLiveData<Integer> screenDimLiveData = new MutableLiveData<>(0);
 
     private final TimerSoundPlayer soundPlayer = new TimerSoundPlayer();
     private PowerManager.WakeLock wakeLock;
@@ -102,6 +106,18 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         return stateLiveData;
     }
 
+    public LiveData<Integer> getScreenDimPercent() {
+        return screenDimLiveData;
+    }
+
+    public boolean isSoundEnabled() {
+        return soundEnabled;
+    }
+
+    public boolean isVibrationEnabled() {
+        return vibrationEnabled;
+    }
+
     /**
      * Prepares the timer with the supplied {@link MeditationConfig} and optionally starts it
      * immediately.
@@ -114,6 +130,7 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         sessionSecondsElapsed = 0;
         sessionSummary.setValue("");
         sessionTotal.setValue("");
+        applySettingsDefaults();
         if (stages.isEmpty()) {
             countdownText.setValue("00:00");
             stageTitle.setValue(getApplication().getString(R.string.label_stage_placeholder));
@@ -328,6 +345,22 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         int minutes = seconds / 60;
         int remainder = seconds % 60;
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainder);
+    }
+
+    private void applySettingsDefaults() {
+        SettingsState state = SettingsManager.getInstance().getSettings(getApplication());
+        soundEnabled = state.isSoundEnabled();
+        vibrationEnabled = state.getVibrationLevel() != SettingsState.VibrationLevel.OFF;
+        screenDimPercent = state.getScreenDimPercent();
+        screenDimLiveData.setValue(screenDimPercent);
+    }
+
+    private void applyScreenDim() {
+        // Removed direct system brightness mutation
+    }
+
+    private void resetScreenDim() {
+        // Removed direct system brightness mutation
     }
 
     @Override

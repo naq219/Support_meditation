@@ -1,26 +1,24 @@
 package naq.sm4.ui.settings;
 
-import android.util.Log;
+import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import naq.sm4.data.SettingsState;
 import naq.sm4.data.SettingsState.VibrationLevel;
 
-public class SettingsViewModel extends ViewModel {
+public class SettingsViewModel extends AndroidViewModel {
 
     private final MutableLiveData<SettingsState> settingsLiveData = new MutableLiveData<>();
+    private final SettingsManager settingsManager;
 
-    public SettingsViewModel() {
-        try {
-            settingsLiveData.setValue(new SettingsState(VibrationLevel.LOW, true, 30));
-        } catch (Exception e) {
-            Log.e("SettingsVM", "Failed to initialize default settings", e);
-            settingsLiveData.setValue(new SettingsState(VibrationLevel.OFF, true, 30));
-        }
+    public SettingsViewModel(@NonNull Application application) {
+        super(application);
+        settingsManager = SettingsManager.getInstance();
+        settingsLiveData.setValue(settingsManager.getSettings(application));
     }
 
     public LiveData<SettingsState> getSettings() {
@@ -28,27 +26,17 @@ public class SettingsViewModel extends ViewModel {
     }
 
     public void updateVibration(@NonNull VibrationLevel level) {
-        SettingsState current = getCurrent();
-        settingsLiveData.setValue(current.withVibration(level));
+        SettingsState updated = settingsManager.updateVibrationLevel(getApplication(), level);
+        settingsLiveData.setValue(updated);
     }
 
     public void updateSoundEnabled(boolean enabled) {
-        SettingsState current = getCurrent();
-        settingsLiveData.setValue(current.withSoundEnabled(enabled));
+        SettingsState updated = settingsManager.updateSoundEnabled(getApplication(), enabled);
+        settingsLiveData.setValue(updated);
     }
 
     public void updateScreenDim(int percent) {
-        percent = Math.max(0, Math.min(100, percent));
-        SettingsState current = getCurrent();
-        settingsLiveData.setValue(current.withScreenDimPercent(percent));
-    }
-
-    private SettingsState getCurrent() {
-        SettingsState current = settingsLiveData.getValue();
-        if (current == null) {
-            current = new SettingsState(VibrationLevel.OFF, true, 30);
-            settingsLiveData.setValue(current);
-        }
-        return current;
+        SettingsState updated = settingsManager.updateScreenDim(getApplication(), percent);
+        settingsLiveData.setValue(updated);
     }
 }
