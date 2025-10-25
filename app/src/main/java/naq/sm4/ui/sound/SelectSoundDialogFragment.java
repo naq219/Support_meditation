@@ -94,6 +94,8 @@ public class SelectSoundDialogFragment extends DialogFragment {
      */
     private void updateSelections(@NonNull ListView listView, @NonNull List<String> sounds) {
         for (int i = 0; i < sounds.size(); i++) {
+
+            
             String sound = sounds.get(i);
             listView.setItemChecked(i, selected.contains(sound));
         }

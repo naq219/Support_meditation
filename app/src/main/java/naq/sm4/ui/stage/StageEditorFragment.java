@@ -85,10 +85,10 @@ public class StageEditorFragment extends Fragment {
         // Set up the sound selection button to navigate to the sound selection dialog.
         binding.selectSoundButton.setOnClickListener(v -> {
             // Create a bundle to pass the currently selected sounds to the sound selection dialog.
-            Bundle args1 = new Bundle();
-            args1.putStringArrayList(SelectSoundDialogFragment.ARG_SELECTED, new ArrayList<>(selectedSounds));
+            Bundle dialogArgs = new Bundle();
+            dialogArgs.putStringArrayList(SelectSoundDialogFragment.ARG_SELECTED, new ArrayList<>(selectedSounds));
             NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_stageEditorFragment_to_selectSoundDialogFragment, args1);
+                    .navigate(R.id.action_stageEditorFragment_to_selectSoundDialogFragment, dialogArgs);
         });
 
         // Set up the cancel button to navigate back to the previous fragment.
