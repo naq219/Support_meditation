@@ -1,5 +1,7 @@
 package naq.sm4.ui.sound;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -10,19 +12,29 @@ import java.util.List;
 
 import naq.sm4.data.MockData;
 
-class SoundLibraryViewModel extends ViewModel {
+public class SoundLibraryViewModel extends ViewModel {
 
     private final MutableLiveData<List<String>> soundsLiveData = new MutableLiveData<>();
 
-    SoundLibraryViewModel() {
-        soundsLiveData.setValue(new ArrayList<>(MockData.getSoundFiles()));
+    public SoundLibraryViewModel() {
+        try {
+            List<String> sounds = MockData.getSoundFiles();
+            if (sounds == null) {
+                sounds = new ArrayList<>();
+                Log.e("SoundLibraryVM", "MockData.getSoundFiles() returned null");
+            }
+            soundsLiveData.setValue(new ArrayList<>(sounds));
+        } catch (Exception e) {
+            Log.e("SoundLibraryVM", "Error initializing sound list", e);
+            soundsLiveData.setValue(new ArrayList<>());
+        }
     }
 
-    LiveData<List<String>> getSounds() {
+    public LiveData<List<String>> getSounds() {
         return soundsLiveData;
     }
 
-    void addSound(String rawName) {
+    public String addSound(String rawName) {
         String sanitized = sanitizeName(rawName);
         if (sanitized.isEmpty()) {
             sanitized = generateDefaultName();
@@ -32,9 +44,10 @@ class SoundLibraryViewModel extends ViewModel {
         current.add(sanitized);
         Collections.sort(current, String.CASE_INSENSITIVE_ORDER);
         soundsLiveData.setValue(current);
+        return sanitized;
     }
 
-    void removeSounds(List<String> toRemove) {
+    public void removeSounds(List<String> toRemove) {
         if (toRemove == null || toRemove.isEmpty()) {
             return;
         }
