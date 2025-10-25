@@ -78,9 +78,14 @@
     <string name="library_add_hint">Tên file (ví dụ: tieng_mua.mp3)</string>
     <string name="library_add_error">Vui lòng nhập tên file hợp lệ</string>
     <string name="library_added_message">Đã thêm "%1$s"</string>
+    <string name="library_import_error">Không thể thêm file âm thanh. Vui lòng thử lại.</string>
     <string name="library_delete_title">Xoá âm thanh</string>
     <string name="library_delete_message">Xoá %1$d file đã chọn?</string>
     <string name="library_deleted_message">Đã xoá %1$d file</string>
+    <string name="library_delete_partial_error">Một số file không thể xoá.</string>
+    <string name="library_delete_in_use_warning">Một số file đang được sử dụng trong buổi thiền: %1$s</string>
+    <string name="library_saf_hint">Chọn file âm thanh từ thiết bị của bạn</string>
     <string name="select_sound_no_options">Chưa có âm thanh khả dụng</string>
     <string name="settings_saved_message">Đã lưu cài đặt mặc định</string>
+    <string name="error_save_config">Không thể lưu buổi thiền. Vui lòng thử lại.</string>
 </resources>

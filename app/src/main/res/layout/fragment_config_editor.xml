@@ -105,6 +105,19 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/openSoundLibraryButton"
+        style="@style/Widget.SM4.OutlinedButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/menu_sound_library"
+        app:icon="@drawable/ic_library_music"
+        app:iconTint="@color/accent_primary"
+        app:layout_constraintBottom_toTopOf="@id/addStageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
         style="@style/Widget.SM4.Button"
         android:layout_width="0dp"

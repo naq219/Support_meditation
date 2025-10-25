@@ -2,6 +2,7 @@ package naq.sm4.ui.home;
 
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -49,6 +50,9 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
         binding.configRecyclerView.setAdapter(configAdapter);
 
         viewModel.getConfigs().observe(getViewLifecycleOwner(), this::renderConfigs);
+        viewModel.isLoading().observe(getViewLifecycleOwner(), this::renderLoading);
+        viewModel.getMessages().observe(getViewLifecycleOwner(), this::renderMessage);
+        viewModel.getErrors().observe(getViewLifecycleOwner(), this::renderError);
 
         binding.addConfigFab.setOnClickListener(v -> showAddConfigDialog());
     }
@@ -94,7 +98,33 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
         configAdapter.updateConfigs(configs);
         if (binding != null) {
             binding.emptyMessage.setVisibility(configs.isEmpty() ? View.VISIBLE : View.GONE);
+            binding.progressBar.setVisibility(View.GONE);
         }
+    }
+
+    private void renderLoading(Boolean loading) {
+        if (binding == null) {
+            return;
+        }
+        boolean show = loading != null && loading;
+        binding.progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+        binding.addConfigFab.setEnabled(!show);
+    }
+
+    private void renderMessage(@Nullable String message) {
+        if (binding == null || TextUtils.isEmpty(message)) {
+            return;
+        }
+        Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_SHORT).show();
+        viewModel.clearMessage();
+    }
+
+    private void renderError(@Nullable String error) {
+        if (binding == null || TextUtils.isEmpty(error)) {
+            return;
+        }
+        Snackbar.make(binding.getRoot(), error, Snackbar.LENGTH_LONG).show();
+        viewModel.clearError();
     }
 
     private void showAddConfigDialog() {
@@ -117,11 +147,6 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
         dialog.setOnShowListener(dlg -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(btn -> {
             String name = input.getText() == null ? "" : input.getText().toString();
             viewModel.addConfig(name);
-            if (binding != null) {
-                Snackbar.make(binding.getRoot(),
-                        getString(R.string.home_config_added, name.trim().isEmpty() ? getString(R.string.mock_selected_config) : name.trim()),
-                        Snackbar.LENGTH_SHORT).show();
-            }
             dialog.dismiss();
         }));
 
@@ -135,11 +160,6 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
                 .setNegativeButton(R.string.button_cancel, null)
                 .setPositiveButton(R.string.menu_delete, (dialog, which) -> {
                     viewModel.deleteConfig(config);
-                    if (binding != null) {
-                        Snackbar.make(binding.getRoot(),
-                                getString(R.string.home_config_deleted, config.getName()),
-                                Snackbar.LENGTH_SHORT).show();
-                    }
                 })
                 .show();
     }
