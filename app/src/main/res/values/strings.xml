@@ -57,15 +57,8 @@
      <string name="library_select_cancel">Huỷ</string>
     <string name="library_selection_count">Đã chọn %1$d file</string>
     <string name="dialog_select_sound_title">Chọn âm thanh</string>
-    <string name="timer_pause">Tạm dừng</string>
-    <string name="timer_resume">Tiếp tục</string>
-    <string name="timer_stop">Dừng</string>
-    <string name="timer_toggle_sound">Âm thanh</string>
-    <string name="timer_toggle_vibration">Rung</string>
     <string name="settings_sound_toggle">Bật âm thanh</string>
     <string name="settings_screen_dim_value">Giảm sáng: %1$d%%</string>
-    <string name="timer_completed_summary">Hoàn thành 3/3 giai đoạn</string>
-    <string name="timer_total_elapsed">Tổng thời gian: 30 phút</string>
     <string name="home_empty_message">Chưa có buổi thiền nào. Nhấn "Thêm buổi thiền" để bắt đầu.</string>
     <string name="dialog_add_config_title">Tạo buổi thiền</string>
     <string name="dialog_add_config_hint">Tên buổi thiền</string>
@@ -88,4 +81,13 @@
     <string name="select_sound_no_options">Chưa có âm thanh khả dụng</string>
     <string name="settings_saved_message">Đã lưu cài đặt mặc định</string>
     <string name="error_save_config">Không thể lưu buổi thiền. Vui lòng thử lại.</string>
+    <string name="error_stage_minutes">Thời lượng phải trong khoảng %1$d – %2$d phút</string>
+    <string name="error_stage_repeat">Lặp lại phải trong khoảng 0 – %1$d phút</string>
+    <string name="timer_missing_sound">Không tìm thấy file âm thanh "%1$s"</string>
+    <string name="timer_session_stopped">Buổi thiền dừng ở %1$d/%2$d giai đoạn</string>
+    <string name="timer_pause">Tạm dừng</string>
+    <string name="timer_resume">Tiếp tục</string>
+    <string name="timer_stop">Dừng</string>
+    <string name="timer_toggle_sound">Âm thanh</string>
+    <string name="timer_toggle_vibration">Rung</string>
 </resources>

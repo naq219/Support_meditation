@@ -71,6 +71,7 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
 
     @Override
     public void onEditClicked(@NonNull MeditationConfig config) {
+        viewModel.setPendingEdit(config);
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_homeFragment_to_configEditorFragment);
     }
@@ -147,6 +148,7 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
         dialog.setOnShowListener(dlg -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(btn -> {
             String name = input.getText() == null ? "" : input.getText().toString();
             viewModel.addConfig(name);
+            viewModel.setPendingEdit(null);
             dialog.dismiss();
         }));
 

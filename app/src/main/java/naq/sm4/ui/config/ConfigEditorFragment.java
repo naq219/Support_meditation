@@ -93,11 +93,21 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
         stageListAdapter.notifyDataSetChanged();
         updateTotalMinutes();
 
-        getParentFragmentManager().setFragmentResultListener(StageEditorFragment.RESULT_KEY, getViewLifecycleOwner(), (requestKey, bundleResult) -> {
-            ArrayList<String> sounds = bundleResult.getStringArrayList(StageEditorFragment.ARG_SELECTED_SOUNDS);
-            if (sounds != null && !sounds.isEmpty()) {
-                // future: integrate stage updates
+        getParentFragmentManager().setFragmentResultListener(StageEditorFragment.RESULT_KEY_STAGE, getViewLifecycleOwner(), (requestKey, bundleResult) -> {
+            String stageName = bundleResult.getString(StageEditorFragment.RESULT_STAGE_NAME, getString(R.string.label_stage_placeholder));
+            int minutes = bundleResult.getInt(StageEditorFragment.RESULT_STAGE_MINUTES, 5);
+            int repeat = bundleResult.getInt(StageEditorFragment.RESULT_STAGE_REPEAT, 0);
+            ArrayList<String> sounds = bundleResult.getStringArrayList(StageEditorFragment.RESULT_STAGE_SOUNDS);
+            int index = bundleResult.getInt(StageEditorFragment.RESULT_STAGE_INDEX, -1);
+
+            MeditationStage updatedStage = new MeditationStage(stageName, minutes, repeat, sounds == null ? new ArrayList<>() : new ArrayList<>(sounds));
+            if (index >= 0 && index < stages.size()) {
+                stages.set(index, updatedStage);
+            } else {
+                stages.add(updatedStage);
             }
+            stageListAdapter.notifyDataSetChanged();
+            updateTotalMinutes();
         });
     }
 
@@ -111,22 +121,50 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
     }
 
     @Override
-    public void onEditStage(@NonNull MeditationStage stage) {
-        openStageEditor(stage);
+    public void onEditStage(int position, @NonNull MeditationStage stage) {
+        openStageEditor(stage, position);
     }
 
     @Override
-    public void onDeleteStage(@NonNull MeditationStage stage) {
-        stages.remove(stage);
+    public void onDeleteStage(int position, @NonNull MeditationStage stage) {
+        if (position >= 0 && position < stages.size()) {
+            stages.remove(position);
+        } else {
+            stages.remove(stage);
+        }
         stageListAdapter.notifyDataSetChanged();
         updateTotalMinutes();
     }
 
+    /**
+     * Opens the stage editor to create a new stage without pre-filled data.
+     */
     private void openStageEditor(@Nullable MeditationStage stage) {
-        NavHostFragment.findNavController(this)
-                .navigate(R.id.action_configEditorFragment_to_stageEditorFragment);
+        openStageEditor(stage, -1);
     }
 
+    /**
+     * Launches the stage editor with the provided stage details so the user can edit them.
+     *
+     * @param stage existing stage or {@code null} when creating a new one.
+     * @param index index of the stage in the current list, or {@code -1} when adding.
+     */
+    private void openStageEditor(@Nullable MeditationStage stage, int index) {
+        Bundle args = new Bundle();
+        if (stage != null) {
+            args.putString(StageEditorFragment.ARG_STAGE_NAME, stage.getName());
+            args.putInt(StageEditorFragment.ARG_STAGE_MINUTES, stage.getMinutes());
+            args.putInt(StageEditorFragment.ARG_STAGE_REPEAT, stage.getRepeatMinutes());
+            args.putStringArrayList(StageEditorFragment.ARG_STAGE_SOUNDS, new ArrayList<>(stage.getSounds()));
+            args.putInt(StageEditorFragment.ARG_STAGE_INDEX, index);
+        }
+        NavHostFragment.findNavController(this)
+                .navigate(R.id.action_configEditorFragment_to_stageEditorFragment, args);
+    }
+
+    /**
+     * Recomputes the total duration for the config and updates UI warnings when exceeding limits.
+     */
     private void updateTotalMinutes() {
         int total = 0;
         for (MeditationStage stage : stages) {
@@ -139,6 +177,9 @@ public class ConfigEditorFragment extends Fragment implements StageListAdapter.S
         }
     }
 
+    /**
+     * Validates the current config data, persists through {@link HomeViewModel}, and closes editor.
+     */
     private void saveConfig() {
         String name = binding.configNameInput.getText() == null ? "" : binding.configNameInput.getText().toString().trim();
         if (TextUtils.isEmpty(name)) {

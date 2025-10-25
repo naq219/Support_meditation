@@ -14,9 +14,9 @@ import naq.sm4.databinding.ItemStageCardBinding;
 class StageListAdapter extends RecyclerView.Adapter<StageListAdapter.StageViewHolder> {
 
     interface StageCardListener {
-        void onEditStage(@NonNull MeditationStage stage);
+        void onEditStage(int position, @NonNull MeditationStage stage);
 
-        void onDeleteStage(@NonNull MeditationStage stage);
+        void onDeleteStage(int position, @NonNull MeditationStage stage);
     }
 
     private final List<MeditationStage> stages;
@@ -54,9 +54,9 @@ class StageListAdapter extends RecyclerView.Adapter<StageListAdapter.StageViewHo
         binding.stageSoundsText.setText(binding.getRoot().getResources()
                 .getString(naq.sm4.R.string.label_sound_count, stage.getSounds().size()));
 
-        binding.editStageButton.setOnClickListener(v -> listener.onEditStage(stage));
-        binding.deleteStageButton.setOnClickListener(v -> listener.onDeleteStage(stage));
-        binding.getRoot().setOnClickListener(v -> listener.onEditStage(stage));
+        binding.editStageButton.setOnClickListener(v -> listener.onEditStage(position, stage));
+        binding.deleteStageButton.setOnClickListener(v -> listener.onDeleteStage(position, stage));
+        binding.getRoot().setOnClickListener(v -> listener.onEditStage(position, stage));
     }
 
     @Override

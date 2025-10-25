@@ -48,6 +48,12 @@ public class SoundLibraryViewModel extends AndroidViewModel {
         return soundsLiveData;
     }
 
+    @NonNull
+    public List<String> getCurrentSounds() {
+        List<String> current = soundsLiveData.getValue();
+        return current == null ? Collections.emptyList() : new ArrayList<>(current);
+    }
+
     public LiveData<Boolean> isLoading() {
         return loadingLiveData;
     }
