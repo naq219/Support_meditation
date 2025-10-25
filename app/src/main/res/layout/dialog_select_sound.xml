@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/surface_primary"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="naq.sm4.ui.sound.SelectSoundDialogFragment">
+
+    <TextView
+        android:id="@+id/dialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_select_sound_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textColor="@color/text_primary" />
+
+    <TextView
+        android:id="@+id/dialogSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/sound_library_title_selection"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textColor="@color/text_secondary"
+        tools:text="Chọn âm thanh cho giai đoạn" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/selectSoundRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_marginTop="12dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"
+        tools:listitem="@layout/item_sound_file" />
+
+    <TextView
+        android:id="@+id/selectSoundEmptyText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="@string/dialog_select_sound_empty"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        tools:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectSoundCancelButton"
+            style="@style/Widget.SM4.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="12dp"
+            android:text="@string/button_cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectSoundDoneButton"
+            style="@style/Widget.SM4.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_done" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="naq.sm4.ui.home.HomeFragment"
+        android:label="@string/title_config_list"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_configEditorFragment"
+            app:destination="@id/configEditorFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_meditationTimerFragment"
+            app:destination="@id/meditationTimerFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_soundLibraryFragment"
+            app:destination="@id/soundLibraryFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_soundLibraryFragment"
+        app:destination="@id/soundLibraryFragment" />
+
+    <action
+        android:id="@+id/action_global_settingsFragment"
+        app:destination="@id/settingsFragment" />
+
+    <fragment
+        android:id="@+id/configEditorFragment"
+        android:name="naq.sm4.ui.config.ConfigEditorFragment"
+        android:label="@string/title_config_editor"
+        tools:layout="@layout/fragment_config_editor">
+        <action
+            android:id="@+id/action_configEditorFragment_to_stageEditorFragment"
+            app:destination="@id/stageEditorFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/stageEditorFragment"
+        android:name="naq.sm4.ui.stage.StageEditorFragment"
+        android:label="@string/title_stage_editor"
+        tools:layout="@layout/fragment_stage_editor">
+        <action
+            android:id="@+id/action_stageEditorFragment_to_selectSoundDialogFragment"
+            app:destination="@id/selectSoundDialogFragment" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/selectSoundDialogFragment"
+        android:name="naq.sm4.ui.sound.SelectSoundDialogFragment"
+        android:label="@string/title_select_sound"
+        tools:layout="@layout/dialog_select_sound" />
+
+    <fragment
+        android:id="@+id/soundLibraryFragment"
+        android:name="naq.sm4.ui.sound.SoundLibraryFragment"
+        android:label="@string/title_sound_library"
+        tools:layout="@layout/fragment_sound_library" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="naq.sm4.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/meditationTimerFragment"
+        android:name="naq.sm4.ui.timer.MeditationTimerFragment"
+        android:label="@string/title_meditation_timer"
+        tools:layout="@layout/fragment_meditation_timer" />
+
+</navigation>

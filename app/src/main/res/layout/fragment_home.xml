@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_primary"
+    tools:context="naq.sm4.ui.home.HomeFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/configRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="16dp"
+        tools:listitem="@layout/item_config_card" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/addConfigFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="@string/action_add_config"
+        android:gravity="center"
+        app:icon="@drawable/ic_add"
+        app:iconTint="@color/text_primary"
+        app:layout_anchorGravity="bottom|end"
+        app:layout_anchor="@id/configRecyclerView"
+        app:layout_dodgeInsetEdges="bottom"
+        app:rippleColor="@color/accent_secondary" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

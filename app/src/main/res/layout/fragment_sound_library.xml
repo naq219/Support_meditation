@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_primary"
+    android:padding="16dp"
+    tools:context="naq.sm4.ui.sound.SoundLibraryFragment">
+
+    <TextView
+        android:id="@+id/libraryDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/sound_library_title_selection"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Chọn âm thanh từ thư mục làm việc" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/libraryActionToggle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/libraryDescription"
+        app:singleSelection="false">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/addSoundButton"
+            style="@style/Widget.SM4.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/library_add"
+            app:icon="@drawable/ic_add"
+            app:iconTint="@color/text_primary" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/selectSoundButton"
+            style="@style/Widget.SM4.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/library_select_mode" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <TextView
+        android:id="@+id/selectionInfoText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/library_selection_count"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/libraryActionToggle"
+        app:layout_constraintTop_toBottomOf="@id/libraryDescription"
+        tools:text="Đã chọn 2 file"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/soundRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/deleteSelectedButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/libraryActionToggle"
+        tools:listitem="@layout/item_sound_file" />
+
+    <TextView
+        android:id="@+id/emptyLibraryText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/library_empty_message"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textColor="@color/text_secondary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/deleteSelectedButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/libraryActionToggle"
+        tools:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/deleteSelectedButton"
+        style="@style/Widget.SM4.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="@string/button_delete_selected"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
