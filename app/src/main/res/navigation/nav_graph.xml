@@ -32,6 +32,14 @@
         android:id="@+id/action_global_settingsFragment"
         app:destination="@id/settingsFragment" />
 
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment" />
+
+    <action
+        android:id="@+id/action_global_guideFragment"
+        app:destination="@id/guideFragment" />
+
     <fragment
         android:id="@+id/configEditorFragment"
         android:name="naq.sm4.ui.config.ConfigEditorFragment"
@@ -42,7 +50,7 @@
             app:destination="@id/stageEditorFragment" />
     </fragment>
 
-    <fragment
+    <dialog
         android:id="@+id/stageEditorFragment"
         android:name="naq.sm4.ui.stage.StageEditorFragment"
         android:label="@string/title_stage_editor"
@@ -50,7 +58,7 @@
         <action
             android:id="@+id/action_stageEditorFragment_to_selectSoundDialogFragment"
             app:destination="@id/selectSoundDialogFragment" />
-    </fragment>
+    </dialog>
 
     <dialog
         android:id="@+id/selectSoundDialogFragment"
@@ -63,6 +71,12 @@
         android:name="naq.sm4.ui.sound.SoundLibraryFragment"
         android:label="@string/title_sound_library"
         tools:layout="@layout/fragment_sound_library" />
+
+    <fragment
+        android:id="@+id/guideFragment"
+        android:name="naq.sm4.ui.guide.GuideFragment"
+        android:label="@string/title_guide"
+        tools:layout="@layout/fragment_guide" />
 
     <fragment
         android:id="@+id/settingsFragment"

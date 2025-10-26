@@ -32,12 +32,22 @@
         android:layout_width="match_parent"
         android:layout_height="280dp"
         android:layout_marginTop="12dp"
+        android:background="@color/surface_secondary"
         android:choiceMode="multipleChoice"
-        android:divider="@android:color/darker_gray"
+        android:divider="@color/divider_transparent"
         android:dividerHeight="1dp"
-        android:listSelector="@android:color/transparent"
+        android:listSelector="@drawable/list_selector_dark"
         android:paddingBottom="8dp"
-        tools:listitem="@android:layout/simple_list_item_multiple_choice" />
+        tools:listitem="@layout/item_sound_choice" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/previewButton"
+        style="@style/Widget.SM4.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:enabled="false"
+        android:text="@string/button_preview_sound" />
 
     <TextView
         android:id="@+id/selectSoundEmptyText"

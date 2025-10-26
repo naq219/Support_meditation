@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.PopupMenu;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,22 +76,8 @@ public class HomeFragment extends Fragment implements HomeConfigAdapter.ConfigCa
     }
 
     @Override
-    public void onOptionsRequested(@NonNull View anchor, @NonNull MeditationConfig config) {
-        PopupMenu popupMenu = new PopupMenu(requireContext(), anchor);
-        MenuInflater inflater = popupMenu.getMenuInflater();
-        inflater.inflate(R.menu.home_config_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.menu_edit_config) {
-                onEditClicked(config);
-                return true;
-            } else if (id == R.id.menu_delete_config) {
-                confirmDeleteConfig(config);
-                return true;
-            }
-            return false;
-        });
-        popupMenu.show();
+    public void onDeleteClicked(@NonNull MeditationConfig config) {
+        confirmDeleteConfig(config);
     }
 
     private void renderConfigs(List<MeditationConfig> configs) {

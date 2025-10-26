@@ -7,12 +7,12 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import naq.sm4.R;
 import naq.sm4.databinding.ActivityMainBinding;
@@ -39,8 +39,14 @@ public class MainActivity extends AppCompatActivity {
             throw new IllegalStateException("NavHostFragment not found");
         }
         navController = navHostFragment.getNavController();
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.homeFragment,
+                R.id.soundLibraryFragment,
+                R.id.guideFragment
+        ).build();
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+
+        setupBottomNavigation();
     }
 
     @Override
@@ -64,5 +70,12 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNavigationView = binding.bottomNavigation;
+        if (bottomNavigationView != null) {
+            NavigationUI.setupWithNavController(bottomNavigationView, navController);
+        }
     }
 }

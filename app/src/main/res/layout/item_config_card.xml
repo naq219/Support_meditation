@@ -15,57 +15,70 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/configNameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="@color/text_primary"
-            tools:text="Thiền buổi sáng" />
-
-        <TextView
-            android:id="@+id/configSummaryText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-            android:textColor="@color/text_secondary"
-            tools:text="30 phút · 3 giai đoạn" />
-
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:gravity="end"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/editButton"
-                style="@style/Widget.SM4.Button"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/configNameText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                app:icon="@drawable/outline_edit_square_24"
-                android:text="@string/edit"
-                android:padding="1dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/text_primary"
+                tools:text="Thiền buổi sáng" />
 
-                app:cornerRadius="5dp"
-                app:iconPadding="0dp" />
+            <TextView
+                android:id="@+id/configSummaryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:textColor="@color/text_secondary"
+                tools:text="30 phút · 3 giai đoạn" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/startButton"
                 style="@style/Widget.SM4.Button"
-
                 android:layout_width="wrap_content"
-                app:icon="@drawable/outline_directions_run_24"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="@string/button_start"
-                android:padding="1dp"
-                app:cornerRadius="5dp"
-                app:iconPadding="0dp" />
+                app:icon="@drawable/outline_directions_run_24"
+                app:iconPadding="8dp"
+                app:iconTint="@color/text_primary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="12dp">
+
+            <ImageButton
+                android:id="@+id/editButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/button_edit"
+                android:padding="8dp"
+                android:src="@drawable/outline_edit_square_24"
+                app:tint="@color/text_secondary" />
+
+            <ImageButton
+                android:id="@+id/deleteButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/menu_delete"
+                android:padding="8dp"
+                android:src="@drawable/outline_delete_24"
+                app:tint="@color/error_container" />
         </LinearLayout>
     </LinearLayout>
 

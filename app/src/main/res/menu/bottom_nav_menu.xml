@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/ic_home"
+        android:title="@string/tab_home" />
+    <item
+        android:id="@+id/soundLibraryFragment"
+        android:icon="@drawable/ic_library_music"
+        android:title="@string/tab_media" />
+    <item
+        android:id="@+id/guideFragment"
+        android:icon="@drawable/ic_info"
+        android:title="@string/tab_guide" />
+</menu>

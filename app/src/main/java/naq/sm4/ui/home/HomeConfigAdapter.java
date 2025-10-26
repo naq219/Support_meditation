@@ -1,7 +1,6 @@
 package naq.sm4.ui.home;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,7 @@ public class HomeConfigAdapter extends RecyclerView.Adapter<HomeConfigAdapter.Co
 
         void onEditClicked(@NonNull MeditationConfig config);
 
-        void onOptionsRequested(@NonNull View anchor, @NonNull MeditationConfig config);
+        void onDeleteClicked(@NonNull MeditationConfig config);
     }
 
     private final List<MeditationConfig> configs = new ArrayList<>();
@@ -59,11 +58,8 @@ public class HomeConfigAdapter extends RecyclerView.Adapter<HomeConfigAdapter.Co
 
         binding.startButton.setOnClickListener(v -> listener.onStartClicked(config));
         binding.editButton.setOnClickListener(v -> listener.onEditClicked(config));
-        binding.getRoot().setOnClickListener(v -> listener.onStartClicked(config));
-        binding.getRoot().setOnLongClickListener(v -> {
-            listener.onOptionsRequested(v, config);
-            return true;
-        });
+        binding.deleteButton.setOnClickListener(v -> listener.onDeleteClicked(config));
+
     }
 
     @Override

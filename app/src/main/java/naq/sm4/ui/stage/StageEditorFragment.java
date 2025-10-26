@@ -1,35 +1,40 @@
 package naq.sm4.ui.stage;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.chip.Chip;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import naq.sm4.R;
-import naq.sm4.core.storage.StorageHelper;
 import naq.sm4.data.MeditationStage;
 import naq.sm4.databinding.FragmentStageEditorBinding;
 import naq.sm4.ui.sound.SelectSoundDialogFragment;
+import naq.sm4.ui.sound.SoundLibraryViewModel;
 
 /**
  * Fragment that allows the user to create or edit a meditation stage, including
  * configuring duration, repeat interval, and associated sound assets.
  */
-public class StageEditorFragment extends Fragment {
+public class StageEditorFragment extends DialogFragment {
 
     public static final String ARG_STAGE_NAME = "arg_stage_name";
     public static final String ARG_STAGE_MINUTES = "arg_stage_minutes";
@@ -51,62 +56,34 @@ public class StageEditorFragment extends Fragment {
     private FragmentStageEditorBinding binding;
     private final Set<String> selectedSounds = new LinkedHashSet<>();
     private int editingIndex = -1;
+    private SoundLibraryViewModel soundLibraryViewModel;
 
-    @Nullable
+    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        binding = FragmentStageEditorBinding.inflate(inflater, container, false);
-        return binding.getRoot();
-    }
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        Context context = requireContext();
+        binding = FragmentStageEditorBinding.inflate(LayoutInflater.from(context));
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        soundLibraryViewModel = new ViewModelProvider(requireActivity()).get(SoundLibraryViewModel.class);
+        soundLibraryViewModel.refreshSounds();
 
-        Bundle args = getArguments();
-        String stageName = args != null ? args.getString(ARG_STAGE_NAME, "") : "";
-        int minutes = args != null ? args.getInt(ARG_STAGE_MINUTES, 5) : 5;
-        int repeat = args != null ? args.getInt(ARG_STAGE_REPEAT, 0) : 0;
-        ArrayList<String> soundsArg = args != null ? args.getStringArrayList(ARG_STAGE_SOUNDS) : null;
-        editingIndex = args != null ? args.getInt(ARG_STAGE_INDEX, -1) : -1;
-
-        binding.stageNameInput.setText(stageName);
-        binding.stageMinutesInput.setText(String.valueOf(minutes));
-        binding.repeatMinutesInput.setText(String.valueOf(repeat));
-
-        if (soundsArg != null && !soundsArg.isEmpty()) {
-            selectedSounds.addAll(soundsArg);
-        } else {
-            selectedSounds.addAll(loadFallbackSounds());
-        }
+        initialiseFromArguments(getArguments());
+        observeSoundLibrary();
+        registerSoundSelectionListener();
+        configureButtons();
         renderSelectedChips();
 
-        // Set up the sound selection button to navigate to the sound selection dialog.
-        binding.selectSoundButton.setOnClickListener(v -> {
-            // Create a bundle to pass the currently selected sounds to the sound selection dialog.
-            Bundle dialogArgs = new Bundle();
-            dialogArgs.putStringArrayList(SelectSoundDialogFragment.ARG_SELECTED, new ArrayList<>(selectedSounds));
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_stageEditorFragment_to_selectSoundDialogFragment, dialogArgs);
-        });
-
-        // Set up the cancel button to navigate back to the previous fragment.
-        binding.cancelStageButton.setOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
-
-        // Set up the save button to validate and save the stage.
-        binding.saveStageButton.setOnClickListener(v -> onSaveStage());
-
-        // Set up a fragment result listener to receive the updated sound selection from the sound selection dialog.
-        getParentFragmentManager().setFragmentResultListener(SelectSoundDialogFragment.RESULT_KEY, getViewLifecycleOwner(), (requestKey, bundle) -> {
-            // Get the updated sound selection from the bundle.
-            ArrayList<String> updatedSounds = bundle.getStringArrayList(SelectSoundDialogFragment.RESULT_SELECTED);
-            if (updatedSounds != null) {
-                selectedSounds.clear();
-                selectedSounds.addAll(updatedSounds);
-                renderSelectedChips();
+        Dialog dialog = new Dialog(context, R.style.Theme_SM4_DialogFragment);
+        dialog.setContentView(binding.getRoot());
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setOnShowListener((DialogInterface.OnShowListener) d -> {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             }
         });
+        return dialog;
     }
 
     /**
@@ -172,21 +149,6 @@ public class StageEditorFragment extends Fragment {
     }
 
     /**
-     * Provides a minimal list of available sounds so the user is not presented with an empty
-     * selection when no stage-specific sounds were provided.
-     */
-    private List<String> loadFallbackSounds() {
-        try {
-            List<String> files = StorageHelper.listAudioFileNamesSorted();
-            if (!files.isEmpty()) {
-                return new ArrayList<>(files.subList(0, Math.min(files.size(), 1)));
-            }
-        } catch (IOException ignored) {
-        }
-        return new ArrayList<>();
-    }
-
-    /**
      * Reflects the currently selected sound list as chips within the UI for quick visual feedback.
      */
     private void renderSelectedChips() {
@@ -195,6 +157,9 @@ public class StageEditorFragment extends Fragment {
         }
 
         binding.selectedSoundsChipGroup.removeAllViews();
+        if (binding.clearSelectedSoundsButton != null) {
+            binding.clearSelectedSoundsButton.setEnabled(!selectedSounds.isEmpty());
+        }
         if (selectedSounds.isEmpty()) {
             Chip chip = createChip(getString(R.string.dialog_select_sound_empty));
             chip.setEnabled(false);
@@ -229,5 +194,76 @@ public class StageEditorFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void initialiseFromArguments(@Nullable Bundle args) {
+        selectedSounds.clear();
+        editingIndex = -1;
+
+        if (args == null) {
+            binding.stageNameInput.setText("");
+            binding.stageMinutesInput.setText("");
+            binding.repeatMinutesInput.setText("");
+            return;
+        }
+
+        editingIndex = args.getInt(ARG_STAGE_INDEX, -1);
+        binding.stageNameInput.setText(args.getString(ARG_STAGE_NAME, ""));
+
+        if (editingIndex >= 0) {
+            int minutes = args.getInt(ARG_STAGE_MINUTES, MIN_MINUTES);
+            int repeat = args.getInt(ARG_STAGE_REPEAT, 0);
+            binding.stageMinutesInput.setText(String.valueOf(minutes));
+            binding.repeatMinutesInput.setText(String.valueOf(repeat));
+
+            ArrayList<String> soundsArg = args.getStringArrayList(ARG_STAGE_SOUNDS);
+            if (soundsArg != null && !soundsArg.isEmpty()) {
+                selectedSounds.addAll(soundsArg);
+            }
+        } else {
+            binding.stageMinutesInput.setText("");
+            binding.repeatMinutesInput.setText("");
+        }
+    }
+
+    private void configureButtons() {
+        binding.selectSoundButton.setOnClickListener(v -> {
+            Bundle dialogArgs = new Bundle();
+            dialogArgs.putStringArrayList(SelectSoundDialogFragment.ARG_SELECTED, new ArrayList<>(selectedSounds));
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_stageEditorFragment_to_selectSoundDialogFragment, dialogArgs);
+        });
+
+        binding.clearSelectedSoundsButton.setOnClickListener(v -> {
+            selectedSounds.clear();
+            renderSelectedChips();
+        });
+
+        binding.cancelStageButton.setOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
+        binding.saveStageButton.setOnClickListener(v -> onSaveStage());
+    }
+
+    private void observeSoundLibrary() {
+        if (soundLibraryViewModel == null) {
+            return;
+        }
+        soundLibraryViewModel.getSounds().observe(this, sounds -> {
+            if (selectedSounds.isEmpty()) {
+                return;
+            }
+            selectedSounds.retainAll(sounds);
+            renderSelectedChips();
+        });
+    }
+
+    private void registerSoundSelectionListener() {
+        getParentFragmentManager().setFragmentResultListener(SelectSoundDialogFragment.RESULT_KEY, this, (requestKey, bundle) -> {
+            ArrayList<String> updatedSounds = bundle.getStringArrayList(SelectSoundDialogFragment.RESULT_SELECTED);
+            if (updatedSounds != null) {
+                selectedSounds.clear();
+                selectedSounds.addAll(updatedSounds);
+                renderSelectedChips();
+            }
+        });
     }
 }

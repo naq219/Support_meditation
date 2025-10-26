@@ -8,6 +8,7 @@
     <string name="title_sound_library">Thư viện âm thanh</string>
     <string name="title_settings">Cài đặt</string>
     <string name="title_meditation_timer">Thiền</string>
+    <string name="title_guide">Hướng dẫn</string>
     <string name="action_add_config">Thêm</string>
     <string name="action_add_stage">Thêm giai đoạn</string>
     <string name="action_save">Lưu</string>
@@ -16,6 +17,9 @@
     <string name="label_stage_minutes">Thời lượng (phút)</string>
     <string name="label_stage_repeat">Lặp lại mỗi (phút)</string>
     <string name="label_selected_sounds">Âm thanh đã chọn</string>
+    <string name="content_description_clear_sounds">Xoá mọi âm thanh đã chọn</string>
+    <string name="button_preview_sound">Nghe thử</string>
+    <string name="button_preview_sound_playing">Đang phát: %1$s</string>
     <string name="label_select_sound_action">Chọn âm thanh…</string>
     <string name="label_sound_library_empty">Chưa có âm thanh. Hãy thêm mới.</string>
     <string name="label_stage_repeat_single">Chỉ phát 1 lần</string>
@@ -27,6 +31,7 @@
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_edit">Chỉnh sửa</string>
     <string name="menu_delete">Xoá</string>
+    <string name="button_edit">Chỉnh sửa</string>
     <string name="button_start">Start</string>
     <string name="button_cancel">Huỷ</string>
     <string name="button_done">Xong</string>
@@ -94,4 +99,7 @@
     <string name="timer_toggle_vibration">Rung</string>
     <string name="xac_nhan">Xác nhận</string>
     <string name="edit">Edit</string>
+    <string name="tab_home">Home</string>
+    <string name="tab_media">Media</string>
+    <string name="tab_guide">Hướng dẫn</string>
 </resources>

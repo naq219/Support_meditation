@@ -1,0 +1,7 @@
+- khoá xoay màn hình
+- chuyển tab HOME,MEDIA,HƯỚNG DẪN xuống dưới
+- ở tab media đã có âm thanh rồi, nhưng ở tab stage lại không thấy, tắt app mở lại mới thấy
+- ở màn sửa giai đoạn:
+    + khi thêm giai đoạn thấy đã chọn sẵn âm thanh, thời lượng, lặp lại... -> không cho chọn mặc định
+    + bên cạnh chữ [x] âm thanh đã chọn, thêm icon thùng rác để xoá hết âm thanh đã chọn cho nhanh
+    + khi show dialog chọn âm thanh, thêm button để play thử âm thanh 
