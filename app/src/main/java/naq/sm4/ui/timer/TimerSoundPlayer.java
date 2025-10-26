@@ -14,13 +14,16 @@ import naq.sm4.core.storage.StorageHelper;
 
 /**
  * Lightweight helper class encapsulating media playback for timer stage cues.
+ * <p>
+ * The class intentionally avoids exposing {@link android.media.MediaPlayer} to the rest of the
+ * codebase to simplify lifecycle management and error handling.
  */
 class TimerSoundPlayer {
 
     private MediaPlayer mediaPlayer;
 
     /**
-     * Plays the provided audio file name from the working directory if available.
+     * Starts playback of the provided audio file from the working directory.
      *
      * @param context current context
      * @param fileName name of the file to play
@@ -42,7 +45,7 @@ class TimerSoundPlayer {
     }
 
     /**
-     * Stops playback if a sound is currently playing and releases the underlying media resources.
+     * Stops playback if in progress and releases the underlying media player resources.
      */
     void stop() {
         if (mediaPlayer != null) {

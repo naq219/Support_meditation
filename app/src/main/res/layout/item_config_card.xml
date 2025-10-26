@@ -48,18 +48,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="@string/menu_edit"
-                app:cornerRadius="12dp"
-                app:iconPadding="8dp" />
+                app:icon="@drawable/outline_edit_square_24"
+                android:text="@string/edit"
+                android:padding="1dp"
+
+                app:cornerRadius="5dp"
+                app:iconPadding="0dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/startButton"
                 style="@style/Widget.SM4.Button"
+
                 android:layout_width="wrap_content"
+                app:icon="@drawable/outline_directions_run_24"
                 android:layout_height="wrap_content"
                 android:text="@string/button_start"
-                app:cornerRadius="12dp"
-                app:iconPadding="8dp" />
+                android:padding="1dp"
+                app:cornerRadius="5dp"
+                app:iconPadding="0dp" />
         </LinearLayout>
     </LinearLayout>
 

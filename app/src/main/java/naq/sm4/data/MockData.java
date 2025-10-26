@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Collection of static helpers that provide placeholder data for previews, tests, or initial
+ * scaffolding before real persistence is wired in.
+ */
 public final class MockData {
 
     private MockData() {
     }
 
+    /**
+     * @return sample meditation configurations showcasing different stage structures.
+     */
     public static List<MeditationConfig> getMeditationConfigs() {
         List<MeditationConfig> configs = new ArrayList<>();
         configs.add(new MeditationConfig(
@@ -38,6 +45,9 @@ public final class MockData {
         return configs;
     }
 
+    /**
+     * @return curated list of available sound file names used by previews.
+     */
     public static List<String> getSoundFiles() {
         return Arrays.asList(
                 "Tieng mưa nhẹ.mp3",
@@ -52,6 +62,9 @@ public final class MockData {
         );
     }
 
+    /**
+     * @return reusable base stages that can seed new configurations in tests.
+     */
     public static List<MeditationStage> getTemplateStages() {
         return Arrays.asList(
                 new MeditationStage("Khởi động", 5, 0, Arrays.asList("bell_start.mp3")),

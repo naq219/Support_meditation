@@ -32,7 +32,12 @@
 
     <style name="Widget.SM4.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/text_primary</item>
-        <item name="backgroundTint">@color/accent_secondary</item>
+        <item name="backgroundTint">#442E2121</item>
+    </style>
+
+    <style name="Widget.SM4.Button_primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="backgroundTint">@color/teal_200</item>
     </style>
 
     <style name="Widget.SM4.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">

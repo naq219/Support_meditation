@@ -110,6 +110,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:visibility="gone"
         android:text="@string/menu_sound_library"
         app:icon="@drawable/ic_library_music"
         app:iconTint="@color/accent_primary"
@@ -119,7 +120,7 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
-        style="@style/Widget.SM4.Button"
+        style="@style/Widget.SM4.Button_primary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"

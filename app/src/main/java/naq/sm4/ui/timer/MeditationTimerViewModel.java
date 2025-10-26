@@ -33,6 +33,9 @@ import naq.sm4.ui.settings.SettingsManager;
  */
 public class MeditationTimerViewModel extends AndroidViewModel {
 
+    /**
+     * High level lifecycle states for the session timer, used to drive UI controls and behavior.
+     */
     public enum TimerState {
         IDLE,
         RUNNING,
@@ -77,46 +80,79 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         super(application);
     }
 
+    /**
+     * @return formatted remaining time for the current stage.
+     */
     public LiveData<String> getCountdownText() {
         return countdownText;
     }
 
+    /**
+     * @return name of the current stage prefixed via resources.
+     */
     public LiveData<String> getStageTitle() {
         return stageTitle;
     }
 
+    /**
+     * @return human-readable counter (e.g. "1/3") of the active stage.
+     */
     public LiveData<String> getStageCounter() {
         return stageCounter;
     }
 
+    /**
+     * @return label describing the next stage, or empty when none remains.
+     */
     public LiveData<String> getNextStageTitle() {
         return nextStageTitle;
     }
 
+    /**
+     * @return summary text displayed when the session finishes or is stopped.
+     */
     public LiveData<String> getSessionSummary() {
         return sessionSummary;
     }
 
+    /**
+     * @return formatted total elapsed time for the completed session.
+     */
     public LiveData<String> getSessionTotal() {
         return sessionTotal;
     }
 
+    /**
+     * @return transient error message emitted when sounds fail to load or similar issues occur.
+     */
     public LiveData<String> getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * @return observable timer state allowing the UI to toggle controls.
+     */
     public LiveData<TimerState> getState() {
         return stateLiveData;
     }
 
+    /**
+     * @return brightness preference to apply while the timer is visible (0-100).
+     */
     public LiveData<Integer> getScreenBrightnessPercent() {
         return screenBrightnessLiveData;
     }
 
+    /**
+     * @return {@code true} when audio cues are currently allowed.
+     */
     public boolean isSoundEnabled() {
         return soundEnabled;
     }
 
+    /**
+     * @return {@code true} when vibration cues are currently allowed.
+     */
     public boolean isVibrationEnabled() {
         return vibrationEnabled;
     }
@@ -226,6 +262,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         vibrationEnabled = enabled && vibrationStrengthPercent > 0;
     }
 
+    /**
+     * Loads a stage by index, resetting timers and exposing metadata to observers.
+     */
     private void loadStage(int index) {
         MeditationStage stage = stages.get(index);
         secondsRemaining = stage.getMinutes() * 60;
@@ -243,6 +282,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Called every second to drive countdown progression and stage transitions.
+     */
     private void handleTick() {
         if (stateLiveData.getValue() != TimerState.RUNNING) {
             return;
@@ -264,6 +306,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Moves to the next stage or completes the session when none remain.
+     */
     private void advanceStage() {
         currentStageIndex++;
         if (currentStageIndex >= stages.size()) {
@@ -275,6 +320,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         handler.postDelayed(tickRunnable, TICK_INTERVAL_MS);
     }
 
+    /**
+     * Finalises the session, emits summary text, and cleans up resources.
+     */
     private void completeSession() {
         handler.removeCallbacks(tickRunnable);
         stateLiveData.setValue(TimerState.COMPLETED);
@@ -284,6 +332,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         playSilently();
     }
 
+    /**
+     * Triggers the cue for the current stage, combining vibration feedback and audio playback.
+     */
     private void playStageCue() {
         vibrateCue();
         if (!soundEnabled || stages.isEmpty()) {
@@ -307,10 +358,16 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Stops any active sound playback.
+     */
     private void playSilently() {
         soundPlayer.stop();
     }
 
+    /**
+     * Triggers a vibration feedback using the configured strength when enabled.
+     */
     private void vibrateCue() {
         if (!vibrationEnabled || vibrationStrengthPercent <= 0) {
             return;
@@ -328,6 +385,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Ensures the screen stays awake/dimmed appropriately during active sessions.
+     */
     private void acquireWakeLock() {
         if (wakeLock == null) {
             PowerManager powerManager = (PowerManager) getApplication().getSystemService(Application.POWER_SERVICE);
@@ -340,18 +400,27 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Releases the wake lock once the session pauses or stops.
+     */
     private void releaseWakeLock() {
         if (wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
         }
     }
 
+    /**
+     * Formats seconds into a mm:ss string for display.
+     */
     private String formatDuration(int seconds) {
         int minutes = seconds / 60;
         int remainder = seconds % 60;
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainder);
     }
 
+    /**
+     * Reloads persisted settings so the timer honours the latest user preferences.
+     */
     private void applySettingsDefaults() {
         SettingsState state = SettingsManager.getInstance().getSettings(getApplication());
         soundEnabled = state.isSoundEnabled();
@@ -361,6 +430,9 @@ public class MeditationTimerViewModel extends AndroidViewModel {
         screenBrightnessLiveData.setValue(screenBrightnessPercent);
     }
 
+    /**
+     * Picks a random sound from the provided list to add variation between repeats.
+     */
     private String selectRandomSound(@NonNull List<String> sounds) {
         if (sounds.size() == 1) {
             return sounds.get(0);

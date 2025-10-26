@@ -8,7 +8,7 @@
     <string name="title_sound_library">Thư viện âm thanh</string>
     <string name="title_settings">Cài đặt</string>
     <string name="title_meditation_timer">Thiền</string>
-    <string name="action_add_config">Thêm buổi thiền</string>
+    <string name="action_add_config">Thêm</string>
     <string name="action_add_stage">Thêm giai đoạn</string>
     <string name="action_save">Lưu</string>
     <string name="action_cancel">Huỷ</string>
@@ -27,7 +27,7 @@
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_edit">Chỉnh sửa</string>
     <string name="menu_delete">Xoá</string>
-    <string name="button_start">Bắt đầu</string>
+    <string name="button_start">Start</string>
     <string name="button_cancel">Huỷ</string>
     <string name="button_done">Xong</string>
     <string name="button_delete_selected">Xoá đã chọn</string>
@@ -92,4 +92,6 @@
     <string name="timer_stop">Dừng</string>
     <string name="timer_toggle_sound">Âm thanh</string>
     <string name="timer_toggle_vibration">Rung</string>
+    <string name="xac_nhan">Xác nhận</string>
+    <string name="edit">Edit</string>
 </resources>

@@ -9,13 +9,18 @@ import androidx.annotation.NonNull;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
+/**
+ * Lightweight façade around {@link StorageHelper} that exposes sound library operations to
+ * view-models without leaking low-level file-system details.
+ */
 public class SoundFileRepository {
 
     private static final String TAG = "SoundRepo";
 
+    /**
+     * @return sorted list of available audio file names in the working directory.
+     */
     public List<String> loadSoundFiles() {
         try {
             return StorageHelper.listAudioFileNamesSorted();
@@ -25,6 +30,9 @@ public class SoundFileRepository {
         }
     }
 
+    /**
+     * Imports a sound file from the given {@link Uri} into the working directory.
+     */
     public String importSound(@NonNull Context context, @NonNull Uri sourceUri, @NonNull String desiredName) {
         try {
             return StorageHelper.copyToWorkingDirectory(context, sourceUri, desiredName);
@@ -34,6 +42,9 @@ public class SoundFileRepository {
         }
     }
 
+    /**
+     * Removes the identified sound file if it exists.
+     */
     public boolean deleteSound(@NonNull String fileName) {
         try {
             return StorageHelper.deleteSound(fileName);
@@ -43,6 +54,9 @@ public class SoundFileRepository {
         }
     }
 
+    /**
+     * @return {@code true} when the file name has a supported audio extension.
+     */
     public boolean isSupported(@NonNull String fileName) {
         return StorageHelper.isSupportedAudioFile(fileName);
     }

@@ -21,6 +21,11 @@ import java.util.List;
 import naq.sm4.data.MeditationConfig;
 import naq.sm4.data.MeditationStage;
 
+/**
+ * Repository responsible for persisting {@link MeditationConfig} collections to disk using JSON
+ * serialization. Input data is sanitised before being written to prevent corrupt or invalid
+ * entries.
+ */
 public class ConfigRepository {
 
     private static final String TAG = "ConfigRepo";
@@ -28,6 +33,10 @@ public class ConfigRepository {
     private static final Type CONFIG_LIST_TYPE = new TypeToken<List<MeditationConfig>>() {
     }.getType();
 
+    /**
+     * Loads saved configurations from storage, returning an empty list when the file is missing or
+     * parsing fails. Invalid entries are filtered out and normalised.
+     */
     @NonNull
     public List<MeditationConfig> loadConfigs(@NonNull Context context) {
         try {
@@ -47,6 +56,11 @@ public class ConfigRepository {
         }
     }
 
+    /**
+     * Serialises the provided configuration list to disk, replacing any previous content.
+     *
+     * @return {@code true} when the write succeeds.
+     */
     public boolean saveConfigs(@NonNull Context context, @NonNull List<MeditationConfig> configs) {
         try {
             File configFile = StorageHelper.getConfigFile(context);
@@ -59,6 +73,9 @@ public class ConfigRepository {
         }
     }
 
+    /**
+     * Defensive copy ensuring no {@code null} entries or out-of-range values leak into the app.
+     */
     @NonNull
     private List<MeditationConfig> sanitizeConfigs(@Nullable List<MeditationConfig> configs) {
         if (configs == null) {
@@ -79,6 +96,9 @@ public class ConfigRepository {
         return sanitized;
     }
 
+    /**
+     * Sanitises child stage definitions, clamping durations and removing {@code null} references.
+     */
     @NonNull
     private List<MeditationStage> sanitizeStages(@NonNull List<MeditationStage> stages) {
         List<MeditationStage> sanitized = new ArrayList<>();

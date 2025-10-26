@@ -25,6 +25,11 @@ import java.util.List;
 
 import naq.sm4.core.StorageConstants;
 
+/**
+ * Utility class encapsulating file-system operations used by the app. Responsibilities include
+ * creating required directories, importing/exporting configuration files, and managing audio
+ * assets stored in the public music folder.
+ */
 public final class StorageHelper {
 
     private static final String CONFIG_DIRECTORY_NAME = "configs";
@@ -32,6 +37,10 @@ public final class StorageHelper {
     private StorageHelper() {
     }
 
+    /**
+     * Ensures the working directory inside the public music folder exists, creating it when
+     * necessary.
+     */
     @NonNull
     public static File ensureWorkingDirectory() throws IOException {
         File musicDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC);
@@ -42,6 +51,9 @@ public final class StorageHelper {
         return workingDir;
     }
 
+    /**
+     * Ensures an internal directory dedicated to storing JSON configuration files exists.
+     */
     @NonNull
     public static File ensureConfigDirectory(@NonNull Context context) throws IOException {
         File configDir = new File(context.getFilesDir(), CONFIG_DIRECTORY_NAME);
@@ -51,12 +63,18 @@ public final class StorageHelper {
         return configDir;
     }
 
+    /**
+     * @return handle to the main configuration file stored within the configs directory.
+     */
     @NonNull
     public static File getConfigFile(@NonNull Context context) throws IOException {
         File dir = ensureConfigDirectory(context);
         return new File(dir, StorageConstants.DEFAULT_CONFIG_FILE);
     }
 
+    /**
+     * Lists all supported audio files present in the working directory.
+     */
     @NonNull
     public static List<File> listAudioFiles() throws IOException {
         File workingDir = ensureWorkingDirectory();
@@ -70,6 +88,9 @@ public final class StorageHelper {
         return new ArrayList<>(Arrays.asList(files));
     }
 
+    /**
+     * Checks whether the provided file name matches one of the supported audio extensions.
+     */
     public static boolean isSupportedAudioFile(@Nullable String fileName) {
         if (TextUtils.isEmpty(fileName)) {
             return false;
@@ -83,6 +104,10 @@ public final class StorageHelper {
         return false;
     }
 
+    /**
+     * Normalises a user supplied file name by trimming whitespace and removing unsupported
+     * characters.
+     */
     @NonNull
     public static String sanitizeFileName(@Nullable String name) {
         if (name == null) {
@@ -95,6 +120,10 @@ public final class StorageHelper {
         return trimmed.replaceAll("[^a-zA-Z0-9._-]", "_");
     }
 
+    /**
+     * Resolves duplicate file names by appending an incrementing suffix until a free slot is
+     * located.
+     */
     @NonNull
     public static String resolveCollision(@NonNull File directory, @NonNull String desiredName) {
         String base = desiredName;
@@ -113,6 +142,10 @@ public final class StorageHelper {
         return candidate;
     }
 
+    /**
+     * Copies the content referenced by {@code sourceUri} into the working directory using a
+     * sanitized file name and a supported extension.
+     */
     @NonNull
     public static String copyToWorkingDirectory(@NonNull Context context,
                                                 @NonNull Uri sourceUri,
@@ -138,12 +171,18 @@ public final class StorageHelper {
         return finalName;
     }
 
+    /**
+     * Deletes the specified audio file from the working directory, ignoring missing files.
+     */
     public static boolean deleteSound(@NonNull String fileName) throws IOException {
         File workingDir = ensureWorkingDirectory();
         File target = new File(workingDir, fileName);
         return target.exists() && target.delete();
     }
 
+    /**
+     * Reads the entire contents of a text file into memory using UTF-8 encoding.
+     */
     @NonNull
     public static String readTextFile(@NonNull File file) throws IOException {
         StringBuilder builder = new StringBuilder();
@@ -156,12 +195,18 @@ public final class StorageHelper {
         return builder.toString();
     }
 
+    /**
+     * Writes the supplied string to the file, replacing any existing content.
+     */
     public static void writeTextFile(@NonNull File file, @NonNull String content) throws IOException {
         try (FileOutputStream outputStream = new FileOutputStream(file, false)) {
             outputStream.write(content.getBytes(StandardCharsets.UTF_8));
         }
     }
 
+    /**
+     * Copies data from an input stream into the target file.
+     */
     public static void writeStreamToFile(@NonNull File target, @NonNull InputStream inputStream) throws IOException {
         try (OutputStream outputStream = new FileOutputStream(target, false)) {
             byte[] buffer = new byte[8192];
@@ -172,6 +217,10 @@ public final class StorageHelper {
         }
     }
 
+    /**
+     * @return case-insensitively sorted list of audio file names found within the working
+     * directory.
+     */
     @NonNull
     public static List<String> listAudioFileNamesSorted() throws IOException {
         List<File> files = listAudioFiles();
