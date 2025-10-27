@@ -34,13 +34,14 @@ public class SoundLibraryViewModel extends AndroidViewModel {
     private final MutableLiveData<String> messageLiveData = new MutableLiveData<>(null);
     private final MutableLiveData<DeletePreview> deletePreviewLiveData = new MutableLiveData<>();
 
-    private final SoundFileRepository repository = new SoundFileRepository();
+    private final SoundFileRepository repository;
     private final ConfigRepository configRepository = new ConfigRepository();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private DeletePreview lastPreview;
 
     public SoundLibraryViewModel(@NonNull Application application) {
         super(application);
+        this.repository = new SoundFileRepository(application);
         refreshSounds();
     }
 
